@@ -1,7 +1,9 @@
 package com.example.fima;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import com.example.fima.models.DBHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
