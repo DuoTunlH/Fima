@@ -1,4 +1,4 @@
-package com.example.fima.ui.notifications;
+package com.example.fima.ui.planning;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,18 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.fima.databinding.FragmentNotificationsBinding;
+import com.example.fima.databinding.FragmentPlanningBinding;
 
-public class NotificationsFragment extends Fragment {
+public class PlanningFragment extends Fragment {
 
-    private FragmentNotificationsBinding binding;
+    private FragmentPlanningBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         NotificationsViewModel notificationsViewModel =
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentPlanningBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textNotifications;

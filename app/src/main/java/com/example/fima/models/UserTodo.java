@@ -7,4 +7,13 @@ public class UserTodo {
     private String description;
     private String date;
     private double amount;
+
+    public UserTodo(int id, int userId, String title, String description, String date, double amount) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.description = description;
+        this.date = date;
+        this.amount = amount;
+    }
 }

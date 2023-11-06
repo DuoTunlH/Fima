@@ -22,7 +22,15 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
 
-    public DBHandler(Context context){
+    private static DBHandler instance;
+    public static synchronized DBHandler getInstance(Context context) {
+        if (instance == null) {
+            instance = new DBHandler(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    private DBHandler(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     @Override

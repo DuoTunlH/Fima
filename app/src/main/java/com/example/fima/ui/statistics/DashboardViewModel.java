@@ -1,4 +1,4 @@
-package com.example.fima.ui.dashboard;
+package com.example.fima.ui.statistics;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,7 +12,6 @@ public class DashboardViewModel extends ViewModel {
         mText = new MutableLiveData<>();
         mText.setValue("This is dashboard fragment");
     }
-
     public LiveData<String> getText() {
         return mText;
     }
