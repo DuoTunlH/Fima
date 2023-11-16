@@ -3,4 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_statistics">Statistics</string>
     <string name="title_planning">Planning</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="repeatPw">Repeat your password</string>
 </resources>
