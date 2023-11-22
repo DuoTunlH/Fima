@@ -1,10 +1,12 @@
 package com.example.fima.common;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
@@ -19,8 +21,8 @@ import java.util.ArrayList;
 
 public class CategorySpinnerAdapter extends ArrayAdapter<Category> {
     public CategorySpinnerAdapter(Context context,
-                          ArrayList<Category> algorithmList) {
-        super(context, 0, algorithmList);
+                          Category categories[]) {
+        super(context, 0, categories);
     }
 
     @NonNull
@@ -41,11 +43,12 @@ public class CategorySpinnerAdapter extends ArrayAdapter<Category> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_spinner, parent, false);
         }
-
+        ImageView imageView = convertView.findViewById(R.id.image_view);
         TextView textViewName = convertView.findViewById(R.id.text_view);
         Category currentItem = getItem(position);
 
         if (currentItem != null) {
+            imageView.setImageResource(currentItem.drawable);
             textViewName.setText(currentItem.name);
         }
         return convertView;

@@ -23,20 +23,14 @@ public class ExpenseDetailActivity extends AppCompatActivity {
     Spinner spinner;
     EditText dateEdt;
     ImageButton datePickerBtn;
-    ArrayList<Category> categories;
+    Category categories[];
     Date date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_detail);
-        categories = new ArrayList<>();
-        Category a = new Category(1, "an");
-        Category b = new Category(1, "uong");
-        categories.add(a);
-        categories.add(b);
-        categories.add(a);
-        categories.add(b);
+        categories = Category.values();
         spinner = findViewById(R.id.spinner);
         dateEdt = findViewById(R.id.dateEdt);
         datePickerBtn = findViewById(R.id.datePickerBtn);
@@ -61,7 +55,6 @@ public class ExpenseDetailActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
     public void pickDate(){
         SimpleDateFormat df = new SimpleDateFormat("dd-M-yyyy");
