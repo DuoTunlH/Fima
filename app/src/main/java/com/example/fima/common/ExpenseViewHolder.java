@@ -20,8 +20,6 @@ public class ExpenseViewHolder extends RecyclerView.ViewHolder{
 
     public void setExpense(UserExpense expense) {
         this.expense = expense;
-        name.setText(String.valueOf(expense.getType()));
-        amount.setText(String.valueOf(expense.getAmount()));
     }
 
     public ExpenseViewHolder(@NonNull View itemView) {
