@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingTop="@dimen/size50dp"
     tools:context=".LogInActivity">
 
     <TextView
@@ -25,7 +26,7 @@
         android:drawableLeft="@drawable/user"
         android:drawablePadding="@dimen/size10dp"
         android:ems="10"
-        android:hint="@string/username"
+        android:hint="@string/email"
         android:inputType="text"
         android:padding="@dimen/size10dp"
         android:textColorHint="@color/gray" />
@@ -45,6 +46,29 @@
         android:textColorHint="@color/gray" />
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cbRememberMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Rememberme" />
+
+        <TextView
+            android:id="@+id/tvForgetPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="italic"
+            android:textColor="@color/blue500"
+            android:gravity="center"
+            android:text="@string/ForgetPass" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnLogIn"
         android:layout_width="match_parent"
@@ -53,13 +77,31 @@
         android:background="@color/blue500"
         android:text="LOG IN" />
 
-
-    <Button
-        android:id="@+id/btnNavSignUp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size10dp"
-        android:background="@color/blue500"
-        android:text="Sign Up" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:paddingRight="@dimen/size10dp"
+            android:layout_weight="1"
+            android:textSize="@dimen/size16sp"
+            android:text="Don't have an account?" />
+
+        <TextView
+            android:id="@+id/tvNavigateSignIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="italic"
+            android:textColor="@color/blue500"
+            android:textSize="@dimen/size16sp"
+            android:text="@string/tvSignIn" />
+    </LinearLayout>
+
 
 </LinearLayout>
