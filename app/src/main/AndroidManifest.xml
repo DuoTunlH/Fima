@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fima"
         tools:targetApi="31">
+              <activity
+            android:name=".ExpenseDetailActivity"
+            android:exported="false"/>
         <activity
             android:name=".signUpActivity"
             android:exported="false" />
