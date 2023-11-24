@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_new_target"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.AddNewTarget.AddNewTarget">
-<!--Thêm mục tiêu mới -->
+    <!--Thêm mục tiêu mới -->
     <ImageView
         android:id="@+id/ic_back"
         android:layout_width="wrap_content"
@@ -130,8 +131,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:inputType="text"
-                android:hint="dd/mm/yy" />
+                android:hint="dd/mm/yy"
+                android:inputType="text" />
 
             <ImageView
                 android:id="@+id/imageView"
@@ -143,22 +144,23 @@
         </LinearLayout>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Loại mục tiêu" />
+
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
 
 
         </LinearLayout>
@@ -169,6 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Mức độ ưu tiên" />
+
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"

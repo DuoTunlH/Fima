@@ -49,7 +49,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class StatisticsFragment extends Fragment {
+public class    StatisticsFragment extends Fragment {
 
     private FragmentStatisticsBinding binding;
     private DBHandler dbHandler;
