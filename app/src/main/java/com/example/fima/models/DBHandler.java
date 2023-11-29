@@ -98,7 +98,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // Kiem tra ton tai khong
         if (checkUserIsExit(firstName, lastName, email))
         {
-            Toast.makeText(context, "Account exits!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Account exits!", Toast.LENGTH_SHORT).show();
         }
         else
         {

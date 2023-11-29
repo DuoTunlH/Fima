@@ -34,7 +34,7 @@ public class LogInActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User.getInstance().initialize(1,"a","a","a");
+                User.getInstance().initialize(1,"a","a","a","a");
                 Intent intent = new Intent(LogInActivity.this, MainActivity.class);
                 startActivity(intent);
             }
