@@ -1,17 +1,24 @@
 package com.example.fima;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.fima.models.DBHandler;
+import com.example.fima.ui.settings.changeInfor;
+import com.example.fima.ui.settings.changePassword;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavArgument;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -21,8 +28,9 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.fima.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ActivityMainBinding binding;
     public DBHandler dbHandler;
@@ -48,9 +56,45 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 //        AppBarConfiguration appBarConfiguration =  new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this,navController, appBarConfiguration);
+//        NavigationUI.setupActionBarWithNavController(this,navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
         toggle.syncState();
         //
+        NavigationView navigationView = findViewById(R.id.navigation_viewV);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.nav_changeInfo)
+        {
+            Intent intent = new Intent(MainActivity.this, changeInfor.class);
+            startActivity(intent);
+        }
+        if (id == R.id.nav_ChangePassword)
+        {
+            Intent intent = new Intent(MainActivity.this, changePassword.class);
+            startActivity(intent);
+        }
+        if (id == R.id.nav_LogOut)
+        {
+            Intent intent = new Intent(MainActivity.this, LogInActivity.class);
+            startActivity(intent);
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    // Xu ly click nut back
+    @Override
+    public void onBackPressed() {
+        // Dang mo back dong lai
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        // Dong roi back thoat app
+        else {
+            super.onBackPressed();
+        }
     }
 }

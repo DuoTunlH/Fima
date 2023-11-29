@@ -97,16 +97,29 @@
             android:password="true"
             android:textColorHint="@color/gray" />
 
-        <CheckBox
-            android:id="@+id/checkBox"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size10dp"
-            android:text="I agree to the rules"
-            android:textColor="@color/blue500"
-            android:textStyle="italic"
-            android:textSize="15dp" />
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/checkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size10dp"
+                android:text="I agree to the"
+                android:textSize="15dp" />
+            <TextView
+                android:id="@+id/tvRules"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size10dp"
+                android:textSize="@dimen/size16sp"
+                android:textColor="@color/blue500"
+                android:textStyle="italic"
+                android:text="TERMS">
 
+            </TextView>
+        </LinearLayout>
         <Button
             android:id="@+id/btnSignUp"
             android:layout_width="match_parent"

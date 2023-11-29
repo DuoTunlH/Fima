@@ -18,6 +18,10 @@
         <activity
             android:name=".ui.AddExpenseActivity"
             android:exported="false" />
+        <activity android:name=".ui.settings.changeInfor"
+            android:exported="false"/>
+        <activity android:name=".ui.settings.changePassword"
+            android:exported="false"/>
         <activity
             android:name=".signUpActivity"
             android:exported="false" />

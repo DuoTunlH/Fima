@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +24,8 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String DATE = "date";
     private static final String AMOUNT = "amount";
     private static final String TITLE = "title";
-    public static final String USERNAME = "username";
+    public static final String FIRSTNAME = "firstname";
+    public static final String LASTNAME = "lastname";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
 
@@ -42,7 +44,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         String createTableUsersQuery = "CREATE TABLE " + USERS + " (" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                USERNAME + " TEXT, " +
+                FIRSTNAME + " TEXT, " + LASTNAME + " TEXT, " +
                 EMAIL + " TEXT, " +
                 PASSWORD + " TEXT);";
         db.execSQL(createTableUsersQuery);
@@ -65,10 +67,49 @@ public class DBHandler extends SQLiteOpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-        String sql = "Drop table if exists " + USERS + " , " + USER_EXPENSES + ", " + USER_TODO;
-        db.execSQL(sql);
+        db.execSQL("DROP TABLE IF EXISTS " + USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + USER_EXPENSES);
+        db.execSQL("DROP TABLE IF EXISTS " + USER_TODO);
         onCreate(db);
     }
+    // Kiem tra user
+    boolean checkUserIsExit(String firstName, String lastName, String email)
+    {
+        String sql = "SELECT * FROM " + USERS +
+                " WHERE " + FIRSTNAME + " = " + "'" + firstName + "'" +
+                " AND " + LASTNAME + " = " + "'" + lastName + "'" +
+                " AND " + EMAIL + " = " + "'" + email + "'";
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, null);
+        if (cursor.getCount() != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    // Them mot user moi
+    void addUser(Context context, User user)
+    {
+        String firstName = user.getFirstname();
+        String lastName = user.getLasttname();
+        String email = user.getEmail();
+        // Kiem tra ton tai khong
+        if (checkUserIsExit(firstName, lastName, email))
+        {
+            Toast.makeText(context, "Account exits!", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+
+            // values.put();
+        }
+    }
+
 
     public void addExpense(UserExpense expense){
         SQLiteDatabase db = this.getWritableDatabase();
