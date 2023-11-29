@@ -6,23 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fima.ExpenseDetailActivity;
 import com.example.fima.R;
 import com.example.fima.common.ExpensesRecycleViewAdapter;
 import com.example.fima.databinding.FragmentHomeBinding;
+import com.example.fima.models.DBHandler;
 import com.example.fima.models.UserExpense;
+import com.example.fima.ui.AddExpenseActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -30,8 +29,10 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private RecyclerView recyclerView;
     private CalendarView calendarView;
-    FloatingActionButton fab;
-    List<UserExpense> expenses;
+    private FloatingActionButton fab;
+    private List<UserExpense> expenses;
+    private ExpensesRecycleViewAdapter adapter;
+    private String currentSelectedDate;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,25 +49,17 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycleView);
         calendarView = view.findViewById(R.id.calendarView);
         fab = view.findViewById(R.id.fab);
-        expenses = new ArrayList<>();
-        UserExpense u = new UserExpense(1,1,1,"1","1",1);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-        expenses.add(u);
-
-        ExpensesRecycleViewAdapter adapter = new ExpensesRecycleViewAdapter(getContext(), expenses);
+        SimpleDateFormat df = new SimpleDateFormat("dd-M-yyyy");
+        currentSelectedDate = df.format(calendarView.getDate());
+        expenses = DBHandler.getInstance(getContext()).fetchExpensesByDate(currentSelectedDate);
+        adapter = new ExpensesRecycleViewAdapter(getContext(), expenses);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ExpenseDetailActivity.class);
+                Intent intent = new Intent(getContext(), AddExpenseActivity.class);
+                intent.putExtra("date", currentSelectedDate);
                 startActivity(intent);
             }
         });
@@ -74,9 +67,18 @@ public class HomeFragment extends Fragment {
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-                
+                currentSelectedDate = i2 + "-" + (i1+1) + "-" + i;
+                expenses = DBHandler.getInstance(getContext()).fetchExpensesByDate(currentSelectedDate);
+                adapter.setExpenses(expenses);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        expenses = DBHandler.getInstance(getContext()).fetchExpensesByDate(currentSelectedDate);
+        adapter.setExpenses(expenses);
     }
 
     @Override

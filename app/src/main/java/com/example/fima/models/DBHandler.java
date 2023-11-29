@@ -2,8 +2,13 @@ package com.example.fima.models;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class DBHandler extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -40,6 +45,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 USERNAME + " TEXT, " +
                 EMAIL + " TEXT, " +
                 PASSWORD + " TEXT);";
+        db.execSQL(createTableUsersQuery);
         String createTableUsersExpensesQuery = "CREATE TABLE " + USER_EXPENSES + " (" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 USER_ID + " INTEGER, " +
@@ -47,6 +53,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 DESCRIPTION + " TEXT, " +
                 DATE + " TEXT, " +
                 AMOUNT + " REAL);";
+        db.execSQL(createTableUsersExpensesQuery);
         String createTableUsersTodoQuery = "CREATE TABLE " + USER_TODO + " (" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 USER_ID + " INTEGER, " +
@@ -54,7 +61,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 DESCRIPTION + " TEXT, " +
                 DATE + " TEXT, " +
                 AMOUNT + " REAL);";
-        db.execSQL(createTableUsersQuery + createTableUsersExpensesQuery + createTableUsersTodoQuery);
+        db.execSQL(createTableUsersTodoQuery);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
@@ -62,4 +69,59 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(sql);
         onCreate(db);
     }
+
+    public void addExpense(UserExpense expense){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TYPE, expense.getType());
+        cv.put(AMOUNT, expense.getAmount());
+        cv.put(DATE, expense.getDate());
+        cv.put(DESCRIPTION, expense.getDescription());
+        db.insert(USER_EXPENSES, null, cv);
+        db.close();
+    }
+
+    public void updateExpense(UserExpense expense){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TYPE, expense.getType());
+        cv.put(AMOUNT, expense.getAmount());
+        cv.put(DATE, expense.getDate());
+        cv.put(DESCRIPTION, expense.getDescription());
+        String whereClause = ID + " = ?";
+        String[] whereArgs = {String.valueOf(expense.getId())};
+        db.update(USER_EXPENSES, cv, whereClause, whereArgs);
+    }
+
+    public void deleteExpense(UserExpense expense){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = ID + " = ?";
+        String[] whereArgs = {String.valueOf(expense.getId())};
+        db.delete(USER_EXPENSES, whereClause,whereArgs);
+    }
+
+    public ArrayList<UserExpense> fetchExpensesByDate(String date){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor
+                = db.rawQuery("SELECT * FROM " + USER_EXPENSES + " WHERE " + DATE + " = " + "'"+date+"'", null);
+
+        ArrayList<UserExpense> expenses
+                = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                expenses.add(new UserExpense(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(ID)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(TYPE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DESCRIPTION)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(DATE)),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow(AMOUNT))));
+            } while (cursor.moveToNext());
+        }
+        Collections.reverse(expenses);
+        cursor.close();
+        return expenses;
+    }
+
+
 }

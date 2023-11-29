@@ -1,6 +1,11 @@
 package com.example.fima.models;
 
-public class UserExpense {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class UserExpense implements Parcelable {
     private int id;
     private int userId;
     private int type;
@@ -16,6 +21,28 @@ public class UserExpense {
         this.date = date;
         this.amount = amount;
     }
+
+
+    protected UserExpense(Parcel in) {
+        id = in.readInt();
+        userId = in.readInt();
+        type = in.readInt();
+        description = in.readString();
+        date = in.readString();
+        amount = in.readDouble();
+    }
+
+    public static final Creator<UserExpense> CREATOR = new Creator<UserExpense>() {
+        @Override
+        public UserExpense createFromParcel(Parcel in) {
+            return new UserExpense(in);
+        }
+
+        @Override
+        public UserExpense[] newArray(int size) {
+            return new UserExpense[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -64,4 +91,21 @@ public class UserExpense {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeInt(userId);
+        parcel.writeInt(type);
+        parcel.writeString(description);
+        parcel.writeString(date);
+        parcel.writeDouble(amount);
+
+    }
+
 }
