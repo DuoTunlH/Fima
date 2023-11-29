@@ -93,12 +93,12 @@ public class DBHandler extends SQLiteOpenHelper {
     void addUser(Context context, User user)
     {
         String firstName = user.getFirstname();
-        String lastName = user.getLasttname();
+        String lastName = user.getLastname();
         String email = user.getEmail();
         // Kiem tra ton tai khong
         if (checkUserIsExit(firstName, lastName, email))
         {
-            Toast.makeText(this, "Account exits!", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "Account exits!", Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -163,6 +163,5 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         return expenses;
     }
-
 
 }

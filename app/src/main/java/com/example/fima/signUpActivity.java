@@ -66,22 +66,7 @@ public class signUpActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassWord.getText().toString();
                 String rePassword = etRepeatPW.getText().toString();
-                // Xử lý email
-                if (isValidGmailAddress(email))
-                {
-                    if (cbRule.isChecked())
-                    {
-                        // String commandSql = "INSERT INTO "
-                    }
-                    else
-                    {
-                        Toast.makeText(signUpActivity.this, "You have not accepted the terms!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else
-                {
-                    Toast.makeText(signUpActivity.this, "Invalid email!", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
     }
