@@ -10,7 +10,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.fima.models.DBHandler;
 import com.example.fima.models.User;
 
 public class LogInActivity extends AppCompatActivity {
@@ -34,9 +36,17 @@ public class LogInActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User.getInstance().initialize(1,"a","a","a","a");
-                Intent intent = new Intent(LogInActivity.this, MainActivity.class);
-                startActivity(intent);
+                String email = etLoginUser.getText().toString();
+                String password = etLoginPass.getText().toString();
+                User loginSuccessful = DBHandler.getInstance(getApplicationContext()).checkLogin(email, password);
+                if (loginSuccessful != null) {
+                    User.getInstance().initialize(loginSuccessful.getId(),loginSuccessful.getFirstname() ,loginSuccessful.getLastname(),loginSuccessful.getEmail(),loginSuccessful.getPassword());
+                    Intent intent = new Intent(LogInActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(LogInActivity.this, "Wrong email or password!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         // Handle event navigate sign up

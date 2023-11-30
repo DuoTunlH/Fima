@@ -73,12 +73,10 @@ public class DBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
     // Kiem tra user
-    boolean checkUserIsExit(String firstName, String lastName, String email)
+    public boolean checkUserIsExit(String email)
     {
         String sql = "SELECT * FROM " + USERS +
-                " WHERE " + FIRSTNAME + " = " + "'" + firstName + "'" +
-                " AND " + LASTNAME + " = " + "'" + lastName + "'" +
-                " AND " + EMAIL + " = " + "'" + email + "'";
+                " WHERE " + EMAIL + " = " + "'" + email + "'";
         Cursor cursor = this.getReadableDatabase().rawQuery(sql, null);
         if (cursor.getCount() != 0)
         {
@@ -90,27 +88,92 @@ public class DBHandler extends SQLiteOpenHelper {
         }
     }
     // Them mot user moi
-    void addUser(Context context, User user)
+    public boolean addUser(User user)
     {
-        String firstName = user.getFirstname();
-        String lastName = user.getLastname();
-        String email = user.getEmail();
-        // Kiem tra ton tai khong
-        if (checkUserIsExit(firstName, lastName, email))
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues us = new ContentValues();
+        us.put(FIRSTNAME, user.getFirstname());
+        us.put(LASTNAME, user.getLastname());
+        us.put(EMAIL, user.getEmail());
+        us.put(PASSWORD, user.getPassword());
+        long rowID = db.insert(USERS, null, us);
+        db.close();
+        if (rowID == -1)
         {
-            // Toast.makeText(this, "Account exits!", Toast.LENGTH_SHORT).show();
+            return  false;
         }
-        else
-        {
-            SQLiteDatabase db = this.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-
-            // values.put();
-        }
+        user.setId((int) rowID);
+        return true;
     }
+    // Update thông tin ca nhan
+    public boolean updateInforUser(User user)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues us = new ContentValues();
+        us.put(FIRSTNAME, user.getFirstname());
+        us.put(LASTNAME, user.getLastname());
+        String whereClause = ID + " = ?";
+        String[] whereArgs = {String.valueOf(user.getId())};
+        int row = db.update(USERS, us, whereClause, whereArgs);
+        db.close();
+        if (row > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+    // Update mat khau
+    public boolean updatePassword(User user)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues us = new ContentValues();
+        us.put(PASSWORD, user.getPassword());
+        String whereClause = ID + " = ?";
+        String[] whereArgs = {String.valueOf(user.getId())};
+        int row = db.update(USERS, us, whereClause, whereArgs);
+        db.close();
+        if (row > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+    // Deleta Account
+    // Hàm kiểm tra đăng nhập
+    public User checkLogin(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {ID, FIRSTNAME, LASTNAME, EMAIL, PASSWORD};
+        String selection = EMAIL + " = ? AND " + PASSWORD + " = ?";
+        String[] selectionArgs = {email, password};
 
+        Cursor cursor = db.query(USERS, columns, selection, selectionArgs, null, null, null);
 
+        User user = null;
+
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(ID));
+            String firstname = cursor.getString(cursor.getColumnIndexOrThrow(FIRSTNAME));
+            String lastname = cursor.getString(cursor.getColumnIndexOrThrow(LASTNAME));
+            String email = cursor.getString(cursor.getColumnIndexOrThrow(EMAIL));
+            String password = cursor.getString(cursor.getColumnIndexOrThrow(PASSWORD));
+            user = new User(id, firstname, lastname, email, password);
+        }
+        cursor.close();
+        db.close();
+        return user;
+    }
+    public boolean deleteUser(User user)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = ID + " = ?";
+        String[] whereArgs = {String.valueOf(User.getId())};
+        int row = db.delete(USERS, whereClause, whereArgs);
+        if (row > 0)
+        {
+            return true;
+        }
+        return false;
+    }
     public void addExpense(UserExpense expense){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();

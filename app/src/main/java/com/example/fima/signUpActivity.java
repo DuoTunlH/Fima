@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fima.models.DBHandler;
+import com.example.fima.models.User;
 
 public class signUpActivity extends AppCompatActivity {
     private static final String GMAIL_REGEX = "^[a-zA-Z0-9_]+@gmail\\.com$";
@@ -66,7 +68,40 @@ public class signUpActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassWord.getText().toString();
                 String rePassword = etRepeatPW.getText().toString();
-
+                // Kiem tra nguoi dung khong nhap
+                if (TextUtils.isEmpty(firstname) || TextUtils.isEmpty(lastname) ||
+                        TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(rePassword)) {
+                    Toast.makeText(signUpActivity.this, "Please enter complete information!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Kiem tra xac nhan mat khau
+                if (!password.equals(rePassword)) {
+                    Toast.makeText(signUpActivity.this, "Password and confirm password do not match!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Kiem tra da dong y dieu khoan chua
+                if(!cbRule.isChecked())
+                {
+                    Toast.makeText(signUpActivity.this, "You have not accepted the terms!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Kiem tra ton tai user
+                if (DBHandler.getInstance(getApplicationContext()).checkUserIsExit(email)) {
+                    Toast.makeText(signUpActivity.this, "Email already exists", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                User newUser = new User();
+                newUser.initialize(0, firstname, lastname, email, password);
+                if (DBHandler.getInstance(getApplicationContext()).addUser(newUser))
+                {
+                    Toast.makeText(signUpActivity.this, "Sign Up Success!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(signUpActivity.this, LogInActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    Toast.makeText(signUpActivity.this, "Registration failed!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
