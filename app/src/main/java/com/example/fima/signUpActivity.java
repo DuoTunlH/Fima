@@ -79,6 +79,12 @@ public class signUpActivity extends AppCompatActivity {
                     Toast.makeText(signUpActivity.this, "Password and confirm password do not match!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // Kiem tra email
+                if(!isValidGmailAddress(email))
+                {
+                    Toast.makeText(signUpActivity.this, "Invalid email!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 // Kiem tra da dong y dieu khoan chua
                 if(!cbRule.isChecked())
                 {
@@ -86,13 +92,11 @@ public class signUpActivity extends AppCompatActivity {
                     return;
                 }
                 // Kiem tra ton tai user
-                if (DBHandler.getInstance(getApplicationContext()).checkUserIsExit(email)) {
+                if (DBHandler.getInstance(signUpActivity.this).checkUserIsExit(email)) {
                     Toast.makeText(signUpActivity.this, "Email already exists", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                User newUser = new User();
-                newUser.initialize(0, firstname, lastname, email, password);
-                if (DBHandler.getInstance(getApplicationContext()).addUser(newUser))
+                if (DBHandler.getInstance(signUpActivity.this).addUser(firstname, lastname, email, password))
                 {
                     Toast.makeText(signUpActivity.this, "Sign Up Success!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(signUpActivity.this, LogInActivity.class);

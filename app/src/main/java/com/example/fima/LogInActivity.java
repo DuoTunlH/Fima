@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import com.example.fima.models.DBHandler;
 import com.example.fima.models.User;
+import com.example.fima.ui.settings.FogetPassActivity;
+
+import java.util.Map;
 
 public class LogInActivity extends AppCompatActivity {
     EditText etLoginUser, etLoginPass;
@@ -38,16 +41,26 @@ public class LogInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = etLoginUser.getText().toString();
                 String password = etLoginPass.getText().toString();
-                User loginSuccessful = DBHandler.getInstance(getApplicationContext()).checkLogin(email, password);
-                if (loginSuccessful != null) {
-                    User.getInstance().initialize(loginSuccessful.getId(),loginSuccessful.getFirstname() ,loginSuccessful.getLastname(),loginSuccessful.getEmail(),loginSuccessful.getPassword());
+
+                DBHandler dbHandler = DBHandler.getInstance(LogInActivity.this);
+                Map<String, String> userData = dbHandler.checkLogin(email, password);
+
+                if (userData != null) {
+                    int id = Integer.parseInt(userData.get("id"));
+                    String firstname = userData.get("firstname");
+                    String lastname = userData.get("lastname");
+                    String userEmail = userData.get("email");
+                    String userPassword = userData.get("password");
+
+                    User.getInstance().initialize(id, firstname, lastname, userEmail, userPassword);
+
                     Intent intent = new Intent(LogInActivity.this, MainActivity.class);
                     startActivity(intent);
-                }
-                else {
+                } else {
                     Toast.makeText(LogInActivity.this, "Wrong email or password!", Toast.LENGTH_SHORT).show();
                 }
             }
+
         });
         // Handle event navigate sign up
         tvNavigateSignIn.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +81,8 @@ public class LogInActivity extends AppCompatActivity {
         tvForgetPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            Intent intent = new Intent(LogInActivity.this, FogetPassActivity.class);
+            startActivity(intent);
             }
         });
     }

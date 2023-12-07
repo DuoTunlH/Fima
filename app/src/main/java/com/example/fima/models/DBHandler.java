@@ -10,6 +10,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DBHandler extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -88,32 +90,31 @@ public class DBHandler extends SQLiteOpenHelper {
         }
     }
     // Them mot user moi
-    public boolean addUser(User user)
+    public boolean addUser(String firstname, String lastname, String email, String password)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues us = new ContentValues();
-        us.put(FIRSTNAME, user.getFirstname());
-        us.put(LASTNAME, user.getLastname());
-        us.put(EMAIL, user.getEmail());
-        us.put(PASSWORD, user.getPassword());
+        us.put(FIRSTNAME, firstname);
+        us.put(LASTNAME, lastname);
+        us.put(EMAIL, email);
+        us.put(PASSWORD, password);
         long rowID = db.insert(USERS, null, us);
         db.close();
         if (rowID == -1)
         {
             return  false;
         }
-        user.setId((int) rowID);
         return true;
     }
     // Update thông tin ca nhan
-    public boolean updateInforUser(User user)
+    public boolean updateProfile (String email, String firstname, String lastname)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues us = new ContentValues();
-        us.put(FIRSTNAME, user.getFirstname());
-        us.put(LASTNAME, user.getLastname());
-        String whereClause = ID + " = ?";
-        String[] whereArgs = {String.valueOf(user.getId())};
+        us.put(FIRSTNAME, firstname);
+        us.put(LASTNAME, lastname);
+        String whereClause =  EMAIL + " = ?";
+        String[] whereArgs = {email};
         int row = db.update(USERS, us, whereClause, whereArgs);
         db.close();
         if (row > 0)
@@ -123,13 +124,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return false;
     }
     // Update mat khau
-    public boolean updatePassword(User user)
+    public boolean updatePassword(String email, String password)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues us = new ContentValues();
-        us.put(PASSWORD, user.getPassword());
-        String whereClause = ID + " = ?";
-        String[] whereArgs = {String.valueOf(user.getId())};
+        us.put(PASSWORD, password);
+        String whereClause =  EMAIL + " = ?";
+        String[] whereArgs = {email};
         int row = db.update(USERS, us, whereClause, whereArgs);
         db.close();
         if (row > 0)
@@ -140,7 +141,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
     // Deleta Account
     // Hàm kiểm tra đăng nhập
-    public User checkLogin(String email, String password) {
+    public Map<String, String> checkLogin(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columns = {ID, FIRSTNAME, LASTNAME, EMAIL, PASSWORD};
         String selection = EMAIL + " = ? AND " + PASSWORD + " = ?";
@@ -148,25 +149,42 @@ public class DBHandler extends SQLiteOpenHelper {
 
         Cursor cursor = db.query(USERS, columns, selection, selectionArgs, null, null, null);
 
-        User user = null;
+        Map<String, String> userData = null;
 
         if (cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndexOrThrow(ID));
-            String firstname = cursor.getString(cursor.getColumnIndexOrThrow(FIRSTNAME));
-            String lastname = cursor.getString(cursor.getColumnIndexOrThrow(LASTNAME));
-            String email = cursor.getString(cursor.getColumnIndexOrThrow(EMAIL));
-            String password = cursor.getString(cursor.getColumnIndexOrThrow(PASSWORD));
-            user = new User(id, firstname, lastname, email, password);
+            userData = new HashMap<>();
+            userData.put("id", String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(ID))));
+            userData.put("firstname", cursor.getString(cursor.getColumnIndexOrThrow(FIRSTNAME)));
+            userData.put("lastname", cursor.getString(cursor.getColumnIndexOrThrow(LASTNAME)));
+            userData.put("email", cursor.getString(cursor.getColumnIndexOrThrow(EMAIL)));
+            userData.put("password", cursor.getString(cursor.getColumnIndexOrThrow(PASSWORD)));
         }
+
         cursor.close();
         db.close();
-        return user;
+
+        return userData;
+    }
+    public boolean checkpassword(String password)
+    {
+        String sql = "SELECT * FROM " + USERS +
+                " WHERE " + PASSWORD + " = " + "'" + password + "'";
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, null);
+        if (cursor.getCount() != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
     }
     public boolean deleteUser(User user)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = ID + " = ?";
-        String[] whereArgs = {String.valueOf(User.getId())};
+        String[] whereArgs = {String.valueOf(user.getId())};
         int row = db.delete(USERS, whereClause, whereArgs);
         if (row > 0)
         {
@@ -174,6 +192,24 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         return false;
     }
+    // Check infor of account to change password
+    public boolean checkInforForgetPass(String firstname, String lastname, String email)
+    {
+        String sql = "SELECT * FROM " + USERS +
+                " WHERE " + FIRSTNAME + " = " + "'" + firstname + "'" +
+                " AND " + LASTNAME + " = " + "'" + lastname + "'" +
+                " AND " + EMAIL + " = " + "'" + email + "'";
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, null);
+        if (cursor.getCount() != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void addExpense(UserExpense expense){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
