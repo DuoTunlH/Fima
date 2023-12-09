@@ -11,6 +11,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.fima.models.User;
+
 public class LogInActivity extends AppCompatActivity {
     EditText etLoginUser, etLoginPass;
     TextView tvNavigateSignIn, tvForgetPass;
@@ -32,6 +34,7 @@ public class LogInActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                User.getInstance().initialize(1,"a","a","a");
                 Intent intent = new Intent(LogInActivity.this, MainActivity.class);
                 startActivity(intent);
             }

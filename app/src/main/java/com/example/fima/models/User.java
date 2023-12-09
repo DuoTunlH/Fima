@@ -5,14 +5,30 @@ public class User {
     private String username;
     private String email;
     private String password;
-
-    public User(int id, String username, String email, String password) {
+    private static User instance;
+    private User() {
+    }
+    private User(int id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
     }
 
+
+    public static synchronized User getInstance() {
+        if (instance == null) {
+            instance = new User();
+        }
+        return instance;
+    }
+
+    public void initialize(int id, String username, String email, String password) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
     public int getId() {
         return id;
     }

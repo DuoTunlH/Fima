@@ -6,7 +6,7 @@ import com.example.fima.R;
 
 public enum Category {
 
-    FOOD_BEVERAGE("Food and beverage", R.drawable.dinner_icon),
+    FOOD_BEVERAGE("Food & beverage", R.drawable.dinner_icon),
     HEALTH("Health", R.drawable.health_icon),
     HOUSING("Housing", R.drawable.housing_icon),
     INVESMENT("Investment", R.drawable.invesment_icon),
