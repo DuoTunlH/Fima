@@ -5,8 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.fima.models.DBHandler;
+import com.example.fima.models.User;
 import com.example.fima.ui.settings.changeInfor;
 import com.example.fima.ui.settings.changePassword;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-
         Toolbar toolbar = findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
         // Passing each menu ID as a set of Ids because each
@@ -61,6 +63,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         //
         NavigationView navigationView = findViewById(R.id.navigation_viewV);
+        // Ánh xạ các thành phần
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvUser = headerView.findViewById(R.id.tvHeaderUser);
+        TextView tvEmail = headerView.findViewById(R.id.tvHeaderEmail);
+        // Đặt text
+        String fullname = User.getInstance().getFirstname().toString() + " " + User.getInstance().getLastname().toString();
+        tvUser.setText(fullname);
+        tvEmail.setText(User.getInstance().getEmail().toString());
+
+
         navigationView.setNavigationItemSelectedListener(this);
     }
 

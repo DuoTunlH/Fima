@@ -12,7 +12,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 public class DBHandler extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "fima.db";
@@ -107,14 +111,14 @@ public class DBHandler extends SQLiteOpenHelper {
         return true;
     }
     // Update thông tin ca nhan
-    public boolean updateProfile (String email, String firstname, String lastname)
+    public boolean updateProfile (String firstname, String lastname)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues us = new ContentValues();
         us.put(FIRSTNAME, firstname);
         us.put(LASTNAME, lastname);
-        String whereClause =  EMAIL + " = ?";
-        String[] whereArgs = {email};
+        String whereClause =  ID + " = ?";
+        String[] whereArgs = {String.valueOf(User.getInstance().getId())};
         int row = db.update(USERS, us, whereClause, whereArgs);
         db.close();
         if (row > 0)
@@ -124,7 +128,22 @@ public class DBHandler extends SQLiteOpenHelper {
         return false;
     }
     // Update mat khau
-    public boolean updatePassword(String email, String password)
+    public boolean updatePassword(String password)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues us = new ContentValues();
+        us.put(PASSWORD, password);
+        String whereClause =  ID + " = ?";
+        String[] whereArgs = {String.valueOf(User.getInstance().getId())};
+        int row = db.update(USERS, us, whereClause, whereArgs);
+        db.close();
+        if (row > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+    public boolean updateForgetPassword(String email, String password)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues us = new ContentValues();
@@ -139,7 +158,32 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         return false;
     }
-    // Deleta Account
+    // Ham hash code dung de luu mat khau
+    public  String hashPassword(String password) {
+        try {
+            // Tạo đối tượng MessageDigest với thuật toán SHA-256
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+            // Chuyển đổi mật khẩu thành mảng byte
+            byte[] encodedHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+
+            // Chuyển đổi mảng byte thành chuỗi hex
+            StringBuilder hexString = new StringBuilder(2 * encodedHash.length);
+            for (byte b : encodedHash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // Xử lý nếu thuật toán không tồn tại
+            e.printStackTrace();
+            return null;
+        }
+    }
     // Hàm kiểm tra đăng nhập
     public Map<String, String> checkLogin(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -165,26 +209,58 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return userData;
     }
-    public boolean checkpassword(String password)
-    {
-        String sql = "SELECT * FROM " + USERS +
-                " WHERE " + PASSWORD + " = " + "'" + password + "'";
-        Cursor cursor = this.getReadableDatabase().rawQuery(sql, null);
-        if (cursor.getCount() != 0)
-        {
-            return true;
-        }
-        else
-        {
+    public boolean checkPassword(String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Lấy thông tin người dùng hiện tại từ lớp User
+        User currentUser = User.getInstance();
+
+        String[] columns = {ID};
+        String selection = ID + " = ? AND " + PASSWORD + " = ?";
+        String[] selectionArgs = {String.valueOf(currentUser.getId()), password};
+
+        Cursor cursor = db.query(USERS, columns, selection, selectionArgs, null, null, null);
+
+        boolean isPasswordCorrect = cursor.getCount() != 0;
+
+        cursor.close();
+        db.close();
+
+        return isPasswordCorrect;
+    }
+
+    public boolean isPasswordValid(String password) {
+        // Kiểm tra mật khẩu có ít nhất 5 ký tự
+        if (password.length() < 5) {
             return false;
         }
 
+        // Kiểm tra mật khẩu chứa ít nhất một chữ cái hoa
+        Pattern uppercasePattern = Pattern.compile("[A-Z]");
+        Matcher uppercaseMatcher = uppercasePattern.matcher(password);
+        if (!uppercaseMatcher.find()) {
+            return false;
+        }
+
+        // Kiểm tra mật khẩu chứa ít nhất một chữ cái thường
+        Pattern lowercasePattern = Pattern.compile("[a-z]");
+        Matcher lowercaseMatcher = lowercasePattern.matcher(password);
+        if (!lowercaseMatcher.find()) {
+            return false;
+        }
+
+        // Kiểm tra mật khẩu chứa ít nhất một số
+        Pattern digitPattern = Pattern.compile("[0-9]");
+        Matcher digitMatcher = digitPattern.matcher(password);
+        if (!digitMatcher.find()) {
+            return false;
+        }
+        return true;
     }
-    public boolean deleteUser(User user)
+    public boolean deleteUser()
     {
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = ID + " = ?";
-        String[] whereArgs = {String.valueOf(user.getId())};
+        String[] whereArgs = {String.valueOf(User.getInstance().getId())};
         int row = db.delete(USERS, whereClause, whereArgs);
         if (row > 0)
         {

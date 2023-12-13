@@ -55,8 +55,7 @@ public class signUpActivity extends AppCompatActivity {
         btnBackLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(signUpActivity.this, LogInActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
         // Handle click button sign up
@@ -85,6 +84,12 @@ public class signUpActivity extends AppCompatActivity {
                     Toast.makeText(signUpActivity.this, "Invalid email!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // Kiem tra mat khau
+                if(!(DBHandler.getInstance(signUpActivity.this).isPasswordValid(password)))
+                {
+                    Toast.makeText(signUpActivity.this, "Invalid password!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 // Kiem tra da dong y dieu khoan chua
                 if(!cbRule.isChecked())
                 {
@@ -96,7 +101,7 @@ public class signUpActivity extends AppCompatActivity {
                     Toast.makeText(signUpActivity.this, "Email already exists", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (DBHandler.getInstance(signUpActivity.this).addUser(firstname, lastname, email, password))
+                if (DBHandler.getInstance(signUpActivity.this).addUser(firstname, lastname, email, DBHandler.getInstance(signUpActivity.this).hashPassword(password)))
                 {
                     Toast.makeText(signUpActivity.this, "Sign Up Success!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(signUpActivity.this, LogInActivity.class);

@@ -20,6 +20,7 @@ import com.example.fima.MainActivity;
 import com.example.fima.R;
 import com.example.fima.models.DBHandler;
 import com.example.fima.models.User;
+import com.example.fima.signUpActivity;
 
 public class changePassword extends AppCompatActivity {
     EditText etOldPass, etNewPass, etConPass;
@@ -36,8 +37,7 @@ public class changePassword extends AppCompatActivity {
         btnCancelUpdateNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(changePassword.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
         btnUpdateNewPass.setOnClickListener(new View.OnClickListener() {
@@ -55,15 +55,18 @@ public class changePassword extends AppCompatActivity {
                     return;
                 }
                 // Check syntax password
-
-                if(DBHandler.getInstance(changePassword.this).checkpassword(User.getInstance().getPassword()))
+                if(!(DBHandler.getInstance(changePassword.this).isPasswordValid(newPass)))
                 {
-                    if(DBHandler.getInstance(changePassword.this).updatePassword(User.getInstance().getEmail(), newPass))
+                    Toast.makeText(changePassword.this, "Invalid password!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(DBHandler.getInstance(changePassword.this).checkPassword(DBHandler.getInstance(changePassword.this).hashPassword(oldPass)))
+                {
+                    if(DBHandler.getInstance(changePassword.this).updatePassword(DBHandler.getInstance(changePassword.this).hashPassword(newPass)))
                     {
                         Toast.makeText(changePassword.this, "Update password successfully!", Toast.LENGTH_SHORT).show();
-                        User.getInstance().setPassword(newPass);
-                        Intent intent = new Intent(changePassword.this, MainActivity.class);
-                        startActivity(intent);
+                        User.getInstance().setPassword(DBHandler.getInstance(changePassword.this).hashPassword(newPass));
+                        finish();
                     }
                 }
                 else

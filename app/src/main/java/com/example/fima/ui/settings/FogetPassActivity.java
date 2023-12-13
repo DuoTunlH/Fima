@@ -31,11 +31,14 @@ public class FogetPassActivity extends AppCompatActivity {
         etFPEmail = findViewById(R.id.etForPassEmail);
         etFPNewPass = findViewById(R.id.etForPassNewPass);
         etFPConNewPass = findViewById(R.id.etForPassConNewPass);
+
+        btnUpdateNewPass = findViewById(R.id.btnUpdateForPass);
+        btnCancleNewpass = findViewById(R.id.btnCancelForPass);
+
         btnCancleNewpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FogetPassActivity.this, LogInActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
         btnUpdateNewPass.setOnClickListener(new View.OnClickListener() {
@@ -57,14 +60,17 @@ public class FogetPassActivity extends AppCompatActivity {
                     return;
                 }
                 // Check syntax password
-
+                if(!(DBHandler.getInstance(FogetPassActivity.this).isPasswordValid(newPass)))
+                {
+                    Toast.makeText(FogetPassActivity.this, "Invalid password!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(DBHandler.getInstance(FogetPassActivity.this).checkInforForgetPass(firstname, lastname, email))
                 {
-                    if(DBHandler.getInstance(FogetPassActivity.this).updatePassword(email,newPass))
+                    if(DBHandler.getInstance(FogetPassActivity.this).updateForgetPassword(email, DBHandler.getInstance(FogetPassActivity.this).hashPassword(newPass)))
                     {
                         Toast.makeText(FogetPassActivity.this, "Update password successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(FogetPassActivity.this, LogInActivity.class);
-                        startActivity(intent);
+                        finish();
                     }
                     else
                     {

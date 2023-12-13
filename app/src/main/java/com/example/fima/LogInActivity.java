@@ -43,7 +43,7 @@ public class LogInActivity extends AppCompatActivity {
                 String password = etLoginPass.getText().toString();
 
                 DBHandler dbHandler = DBHandler.getInstance(LogInActivity.this);
-                Map<String, String> userData = dbHandler.checkLogin(email, password);
+                Map<String, String> userData = dbHandler.checkLogin(email, DBHandler.getInstance(LogInActivity.this).hashPassword(password));
 
                 if (userData != null) {
                     int id = Integer.parseInt(userData.get("id"));
