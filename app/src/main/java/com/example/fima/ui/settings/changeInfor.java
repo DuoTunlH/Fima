@@ -53,8 +53,8 @@ public class changeInfor extends AppCompatActivity {
         btnUpdatePro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String firstname = etChgeFirstName.getText().toString();
-                String lastname = etchaneLastName.getText().toString();
+                String firstname = etChgeFirstName.getText().toString().trim();
+                String lastname = etchaneLastName.getText().toString().trim();
                 if(TextUtils.isEmpty(firstname) || TextUtils.isEmpty(lastname))
                 {
                     Toast.makeText(changeInfor.this, "Please enter complete information!", Toast.LENGTH_SHORT).show();

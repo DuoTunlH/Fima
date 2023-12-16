@@ -71,11 +71,11 @@ public class signUpActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String firstname = etFirstName.getText().toString();
-                String lastname = etLastName.getText().toString();
-                String email = etEmail.getText().toString();
-                String password = etPassWord.getText().toString();
-                String rePassword = etRepeatPW.getText().toString();
+                String firstname = etFirstName.getText().toString().trim();
+                String lastname = etLastName.getText().toString().trim();
+                String email = etEmail.getText().toString().trim();
+                String password = etPassWord.getText().toString().trim();
+                String rePassword = etRepeatPW.getText().toString().trim();
                 // Kiem tra nguoi dung khong nhap
                 if (TextUtils.isEmpty(firstname) || TextUtils.isEmpty(lastname) ||
                         TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(rePassword)) {

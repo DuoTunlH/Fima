@@ -52,9 +52,9 @@ public class changePassword extends AppCompatActivity {
         btnUpdateNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String oldPass = etOldPass.getText().toString();
-                String newPass = etNewPass.getText().toString();
-                String conPass = etConPass.getText().toString();
+                String oldPass = etOldPass.getText().toString().trim();
+                String newPass = etNewPass.getText().toString().trim();
+                String conPass = etConPass.getText().toString().trim();
                 if (TextUtils.isEmpty(oldPass) || TextUtils.isEmpty(newPass) || TextUtils.isEmpty(conPass)) {
                     Toast.makeText(changePassword.this, "Please enter complete information!", Toast.LENGTH_SHORT).show();
                     return;

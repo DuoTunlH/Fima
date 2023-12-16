@@ -53,11 +53,11 @@ public class FogetPassActivity extends AppCompatActivity {
         btnUpdateNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newPass = etFPNewPass.getText().toString();
-                String confNewPass = etFPConNewPass.getText().toString();
-                String firstname = etFPFirstName.getText().toString();
-                String lastname = etFPLastName.getText().toString();
-                String email = etFPEmail.getText().toString();
+                String newPass = etFPNewPass.getText().toString().trim();
+                String confNewPass = etFPConNewPass.getText().toString().trim();
+                String firstname = etFPFirstName.getText().toString().trim();
+                String lastname = etFPLastName.getText().toString().trim();
+                String email = etFPEmail.getText().toString().trim();
 
                 if (TextUtils.isEmpty(firstname) || TextUtils.isEmpty(lastname) ||
                         TextUtils.isEmpty(email) || TextUtils.isEmpty(newPass) || TextUtils.isEmpty(confNewPass)) {

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -82,9 +83,13 @@ public class LogInActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = etLoginUser.getText().toString();
-                String password = etLoginPass.getText().toString();
-
+                String email = etLoginUser.getText().toString().trim();
+                String password = etLoginPass.getText().toString().trim();
+                // Kiem tra nguoi dung khong nhap
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+                    Toast.makeText(LogInActivity.this, "Please enter complete information!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 DBHandler dbHandler = DBHandler.getInstance(LogInActivity.this);
                 Map<String, String> userData = dbHandler.checkLogin(email, User.getInstance().hashPassword(password));
 
