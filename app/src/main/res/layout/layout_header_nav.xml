@@ -18,13 +18,13 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="16dp"
-        android:text="username" />
+        android:text="" />
 
     <TextView
         android:id="@+id/tvHeaderEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14dp"
-        android:text="username@gmail.com" />
+        android:text="" />
 
 </LinearLayout>
