@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LLForgetPass"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
     android:layout_gravity="center"
+    android:gravity="center"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/size10dp"
-        android:layout_weight="1"
-        android:textSize="50dp"
         android:layout_margin="@dimen/size10dp"
+        android:layout_weight="1"
+        android:padding="@dimen/size10dp"
+        android:text="Fima"
         android:textColor="@color/blue500"
-        android:textStyle="bold"
-        android:text="Fima" />
+        android:textSize="50dp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size10dp"
         android:layout_weight="1"
         android:padding="@dimen/size10dp"
-        android:layout_margin="@dimen/size10dp"
         android:src="@drawable/reset_password_128" />
 
     <LinearLayout
@@ -37,22 +38,22 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:padding="@dimen/size10dp"
-            android:textSize="@dimen/size16sp"
-            android:text="@string/fistname" />
+            android:text="@string/fistname"
+            android:textSize="@dimen/size16sp" />
 
 
         <EditText
             android:id="@+id/etForPassFName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/size10dp"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:padding="@dimen/size10dp" />
 
     </LinearLayout>
 
@@ -65,23 +66,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:padding="@dimen/size10dp"
-            android:textSize="@dimen/size16sp"
-            android:text="@string/lastname" />
+            android:text="@string/lastname"
+            android:textSize="@dimen/size16sp" />
 
         <EditText
             android:id="@+id/etForPassLName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/size10dp"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:padding="@dimen/size10dp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -91,23 +93,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:padding="@dimen/size10dp"
-            android:textSize="@dimen/size16sp"
-            android:text="@string/email" />
+            android:text="@string/email"
+            android:textSize="@dimen/size16sp" />
 
         <EditText
             android:id="@+id/etForPassEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/size10dp"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:padding="@dimen/size10dp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -117,23 +120,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:padding="@dimen/size10dp"
-            android:textSize="@dimen/size16sp"
-            android:text="New password" />
+            android:text="New password"
+            android:textSize="@dimen/size16sp" />
 
         <EditText
             android:id="@+id/etForPassNewPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/size10dp"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:padding="@dimen/size10dp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -143,35 +147,36 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:padding="@dimen/size10dp"
-            android:textSize="@dimen/size16sp"
-            android:text="@string/confirmNewpassword" />
+            android:text="@string/confirmNewpassword"
+            android:textSize="@dimen/size16sp" />
 
         <EditText
             android:id="@+id/etForPassConNewPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/size10dp"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:ems="10"
-            android:inputType="text" />
+            android:inputType="text"
+            android:padding="@dimen/size10dp" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="2">
 
         <Button
             android:id="@+id/btnUpdateForPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_margin="@dimen/size10dp"
+            android:layout_weight="1"
             android:padding="@dimen/size10dp"
             android:text="Update" />
 
@@ -179,9 +184,9 @@
             android:id="@+id/btnCancelForPass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/size10dp"
             android:layout_margin="@dimen/size10dp"
             android:layout_weight="1"
+            android:padding="@dimen/size10dp"
             android:text="Cancel" />
     </LinearLayout>
 </LinearLayout>

@@ -7,8 +7,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import com.example.fima.models.User;
 public class changeInfor extends AppCompatActivity {
     EditText etChgeFirstName, etchaneLastName;
     Button btnUpdatePro, btnCancelUpdatePro, btnDeleteAccount;
+    LinearLayout contain5;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_changeprofile);
@@ -34,7 +37,13 @@ public class changeInfor extends AppCompatActivity {
         btnUpdatePro = findViewById(R.id.btnUpdateProfile);
         btnCancelUpdatePro = findViewById(R.id.btnCancelUpdateProfile);
         btnDeleteAccount = findViewById(R.id.btnDeleteUser);
-
+        contain5 = findViewById(R.id.LLChangeInfor);
+        contain5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSoftKeyboard();
+            }
+        });
         btnCancelUpdatePro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +65,8 @@ public class changeInfor extends AppCompatActivity {
                     Toast.makeText(changeInfor.this, "Update your profile successfully!", Toast.LENGTH_SHORT).show();
                     User.getInstance().setFirstname(firstname);
                     User.getInstance().setLastname(lastname);
-                    finish();
+                    Intent intent = new Intent(changeInfor.this, MainActivity.class);
+                    startActivity(intent);
                 }
                 else
                 {
@@ -74,7 +84,7 @@ public class changeInfor extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         DBHandler.getInstance(changeInfor.this).deleteUser();
-                        User.getInstance().initialize(0, "", "","", "");
+                        User.getInstance().destroy();
                         Toast.makeText(changeInfor.this, "Account deleted successfully!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(changeInfor.this, LogInActivity.class);
                         startActivity(intent);
@@ -89,5 +99,11 @@ public class changeInfor extends AppCompatActivity {
                 aler.show();
             }
         });
+    }
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

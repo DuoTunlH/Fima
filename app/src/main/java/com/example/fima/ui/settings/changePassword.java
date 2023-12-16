@@ -6,8 +6,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,7 @@ import com.example.fima.signUpActivity;
 public class changePassword extends AppCompatActivity {
     EditText etOldPass, etNewPass, etConPass;
     Button btnUpdateNewPass, btnCancelUpdateNewPass;
+    LinearLayout contain4;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_changepass);
@@ -33,7 +36,13 @@ public class changePassword extends AppCompatActivity {
         etConPass = findViewById(R.id.etGiveConfirmNewPassword);
         btnUpdateNewPass = findViewById(R.id.btnUpdatePass);
         btnCancelUpdateNewPass = findViewById(R.id.btnCancelUpdatePass);
-
+        contain4 = findViewById(R.id.LLChangePass);
+        contain4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSoftKeyboard();
+            }
+        });
         btnCancelUpdateNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,17 +64,17 @@ public class changePassword extends AppCompatActivity {
                     return;
                 }
                 // Check syntax password
-                if(!(DBHandler.getInstance(changePassword.this).isPasswordValid(newPass)))
+                if(!(User.getInstance().isPasswordValid(newPass)))
                 {
-                    Toast.makeText(changePassword.this, "Invalid password!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(changePassword.this, "Password must be at least 5 characters, contain uppercase letters and numbers!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(DBHandler.getInstance(changePassword.this).checkPassword(DBHandler.getInstance(changePassword.this).hashPassword(oldPass)))
+                if(DBHandler.getInstance(changePassword.this).checkPassword(User.getInstance().hashPassword(oldPass)))
                 {
-                    if(DBHandler.getInstance(changePassword.this).updatePassword(DBHandler.getInstance(changePassword.this).hashPassword(newPass)))
+                    if(DBHandler.getInstance(changePassword.this).updatePassword(User.getInstance().hashPassword(newPass)))
                     {
                         Toast.makeText(changePassword.this, "Update password successfully!", Toast.LENGTH_SHORT).show();
-                        User.getInstance().setPassword(DBHandler.getInstance(changePassword.this).hashPassword(newPass));
+                        User.getInstance().setPassword(User.getInstance().hashPassword(newPass));
                         finish();
                     }
                 }
@@ -75,5 +84,11 @@ public class changePassword extends AppCompatActivity {
                 }
             }
         });
+    }
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.fima.LogInActivity;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 public class FogetPassActivity extends AppCompatActivity {
     EditText etFPFirstName, etFPLastName, etFPEmail, etFPNewPass, etFPConNewPass;
     Button btnUpdateNewPass, btnCancleNewpass;
+    LinearLayout contain3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,10 +34,16 @@ public class FogetPassActivity extends AppCompatActivity {
         etFPEmail = findViewById(R.id.etForPassEmail);
         etFPNewPass = findViewById(R.id.etForPassNewPass);
         etFPConNewPass = findViewById(R.id.etForPassConNewPass);
-
+        contain3 = findViewById(R.id.LLForgetPass);
         btnUpdateNewPass = findViewById(R.id.btnUpdateForPass);
         btnCancleNewpass = findViewById(R.id.btnCancelForPass);
 
+        contain3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSoftKeyboard();
+            }
+        });
         btnCancleNewpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,14 +69,14 @@ public class FogetPassActivity extends AppCompatActivity {
                     return;
                 }
                 // Check syntax password
-                if(!(DBHandler.getInstance(FogetPassActivity.this).isPasswordValid(newPass)))
+                if(!(User.getInstance().isPasswordValid(newPass)))
                 {
-                    Toast.makeText(FogetPassActivity.this, "Invalid password!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FogetPassActivity.this, "Password must be at least 5 characters, contain uppercase letters and numbers!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(DBHandler.getInstance(FogetPassActivity.this).checkInforForgetPass(firstname, lastname, email))
                 {
-                    if(DBHandler.getInstance(FogetPassActivity.this).updateForgetPassword(email, DBHandler.getInstance(FogetPassActivity.this).hashPassword(newPass)))
+                    if(DBHandler.getInstance(FogetPassActivity.this).updateForgetPassword(email, User.getInstance().hashPassword(newPass)))
                     {
                         Toast.makeText(FogetPassActivity.this, "Update password successfully!", Toast.LENGTH_SHORT).show();
                         finish();
@@ -83,5 +92,11 @@ public class FogetPassActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

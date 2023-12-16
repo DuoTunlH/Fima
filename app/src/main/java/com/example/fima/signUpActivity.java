@@ -13,10 +13,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ public class signUpActivity extends AppCompatActivity {
     TextView tvRules;
     CheckBox cbRule;
     Button btnSignUp, btnBackLogIn;
+    LinearLayout contain1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +45,14 @@ public class signUpActivity extends AppCompatActivity {
         btnSignUp = findViewById(R.id.btnSignUp);
         btnBackLogIn = findViewById(R.id.btnBackLogIn);
         tvRules = findViewById(R.id.tvRules);
+        contain1 = findViewById(R.id.LLsigUp);
 
-
+        contain1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideSoftKeyboard();
+            }
+        });
         // Handle event click rules
         tvRules.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,9 +94,9 @@ public class signUpActivity extends AppCompatActivity {
                     return;
                 }
                 // Kiem tra mat khau
-                if(!(DBHandler.getInstance(signUpActivity.this).isPasswordValid(password)))
+                if(!(User.getInstance().isPasswordValid(password)))
                 {
-                    Toast.makeText(signUpActivity.this, "Invalid password!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(signUpActivity.this, "Password must be at least 5 characters, contain uppercase letters and numbers!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // Kiem tra da dong y dieu khoan chua
@@ -101,11 +110,9 @@ public class signUpActivity extends AppCompatActivity {
                     Toast.makeText(signUpActivity.this, "Email already exists", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (DBHandler.getInstance(signUpActivity.this).addUser(firstname, lastname, email, DBHandler.getInstance(signUpActivity.this).hashPassword(password)))
+                if (DBHandler.getInstance(signUpActivity.this).addUser(firstname, lastname, email, User.getInstance().hashPassword(password)))
                 {
                     Toast.makeText(signUpActivity.this, "Sign Up Success!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(signUpActivity.this, LogInActivity.class);
-                    startActivity(intent);
                     finish();
                 }
                 else {
@@ -141,5 +148,11 @@ public class signUpActivity extends AppCompatActivity {
         Pattern pattern = Pattern.compile(GMAIL_REGEX);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

@@ -1,5 +1,11 @@
 package com.example.fima.models;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class User {
     private int id;
     private String firstname;
@@ -30,7 +36,56 @@ public class User {
         this.email = email;
         this.password = password;
     }
+    // Ham hash code dung de luu mat khau
+    public  String hashPassword(String password) {
+        try {
+            // Tạo đối tượng MessageDigest với thuật toán SHA-256
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
+            // Chuyển đổi mật khẩu thành mảng byte
+            byte[] encodedHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+
+            // Chuyển đổi mảng byte thành chuỗi hex
+            StringBuilder hexString = new StringBuilder(2 * encodedHash.length);
+            for (byte b : encodedHash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            // Xử lý nếu thuật toán không tồn tại
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public boolean isPasswordValid(String password) {
+        // Kiểm tra mật khẩu có ít nhất 5 ký tự
+        if (password.length() < 5) {
+            return false;
+        }
+
+        // Kiểm tra mật khẩu chứa ít nhất một chữ cái hoa
+        Pattern uppercasePattern = Pattern.compile("[A-Z]");
+        Matcher uppercaseMatcher = uppercasePattern.matcher(password);
+        if (!uppercaseMatcher.find()) {
+            return false;
+        }
+
+        // Kiểm tra mật khẩu chứa ít nhất một số
+        Pattern digitPattern = Pattern.compile("[0-9]");
+        Matcher digitMatcher = digitPattern.matcher(password);
+        if (!digitMatcher.find()) {
+            return false;
+        }
+        return true;
+    }
+    public void destroy(){
+        instance = null;
+    }
     public String getFirstname() {
         return firstname;
     }
