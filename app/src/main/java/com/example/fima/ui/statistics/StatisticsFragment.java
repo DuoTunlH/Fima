@@ -1,5 +1,7 @@
 package com.example.fima.ui.statistics;
 
+import android.app.Activity;
+import android.app.Application;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,17 +20,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.fima.common.ExpensesRecycleViewAdapter;
 import com.example.fima.databinding.FragmentStatisticsBinding;
 import com.example.fima.models.DBHandler;
-import com.github.mikephil.charting.charts.BarChart;
+
+import com.example.fima.models.UserExpense;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -46,8 +49,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class StatisticsFragment extends Fragment {
 
@@ -56,6 +66,13 @@ public class StatisticsFragment extends Fragment {
     private Button btnDaily, btnweekly, btnmonthly, btnyearly;
 
     private View screen1, screen2, screen3, screen4;
+    private TextView displayDate, displayWeek, displayMonth, displayYear;
+
+    PieChart dailyPieChart, weeklyPieChart, monthlyPiechart, yearlyPiechart;
+    LineChart yearlyLineChart, monthlyLineChart;
+
+    RecyclerView  dailyList, weeklyList, monthlyList, yearlyList;
+    int[] colorClassArray = new int[]{Color.LTGRAY, Color.BLUE, Color.CYAN, Color.DKGRAY, Color.GREEN, Color.MAGENTA, Color.RED};
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         DashboardViewModel dashboardViewModel =
@@ -71,30 +88,52 @@ public class StatisticsFragment extends Fragment {
         screen3 = binding.monthlyStatistic;
         screen4 = binding.yearlyStatistic;
 
+        displayDate = binding.displayDate;
+        displayWeek = binding.displayweek;
+        displayMonth = binding.displayMonth;
+        displayYear = binding.displayYear;
 
 
-        PieChart dailyPieChart, weeklyPieChart, monthlyPiechart, yearlyPiechart;
-        LineChart yearlyLineChart, monthlyLineChart;
 
-        ListView dailyList, weeklyList, monthlyList, yearlyList;
+
+        Calendar calendar = Calendar.getInstance();
+        String year = String.valueOf(calendar.get(Calendar.YEAR));
+        String month = String.valueOf(calendar.get(Calendar.MONTH) + 1); // Tháng bắt đầu từ 0
+        String day = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        String today = day + "-" + month + "-" + year;
+        String currentMonth = month + "-" + year;
+
+
+        displayDate.setText(today);
+        String currentWeek = getStartAndEndOfWeek(today).get(0)+" -- "+getStartAndEndOfWeek(today).get(1);
+        displayWeek.setText(currentWeek);
+        displayMonth.setText(currentMonth);
+        displayYear.setText(year);
+
 
         btnDaily = binding.btndaily;
         btnDaily.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 showDatePickerDialog();
+
                 showScreen1();
+
 
             }
         });
+
+
         btnweekly = binding.btnweekly;
         btnweekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog();
+                showWeekPickerDialog();
                 showScreen2();
             }
         });
+
 
         btnmonthly = binding.btnmonthly;
         btnmonthly.setOnClickListener(new View.OnClickListener() {
@@ -113,38 +152,39 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+
+
         //Nhập dữ liệu cho biểu đồ thống kê ngày //
-        dailyPieChart = binding.dailyPieChart;
-        int[] colorClassArray = new int[]{Color.LTGRAY, Color.BLUE, Color.CYAN, Color.DKGRAY, Color.GREEN, Color.MAGENTA, Color.RED};
-        PieDataSet piedataset = new PieDataSet(dailydata1(),"");
+        dailyPieChart = binding.dailyPieChart; // lấy ra biểu đồ từ giao diện thông qua Id
+        PieDataSet piedataset = new PieDataSet(dailydata1(today),"");
+        // truyền vào dữ liệu từ phương thức đã xây dựng
         piedataset.setColors(ColorTemplate.MATERIAL_COLORS);
+        // cài đặt màu sắc cho biểu đổ
         PieData pieData = new PieData(piedataset);
         dailyPieChart.setData(pieData);
         dailyPieChart.setCenterTextSize(25);
         dailyPieChart.setUsePercentValues(true);
         dailyPieChart.setCenterText("daily expense");
+        // cài đặt các yếu tố liên quan
         dailyPieChart.invalidate();
 
-        ArrayList<String> list1 = new ArrayList<>();
-
-        list1.add("bánh tráng - 20k");
-        list1.add("bún đậu - 30k");
-        list1.add("bún bò - 30k");
-
-        ArrayList<String> List = new ArrayList<>();
-        List.addAll(list1);
-
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, List);
+        ArrayList<UserExpense> list1 = new ArrayList<>();
+        list1 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(today,today);
         dailyList = binding.listDailyExpense;
+        ExpensesRecycleViewAdapter adapter1 = new ExpensesRecycleViewAdapter(getContext(),list1);
         dailyList.setAdapter(adapter1);
-        adapter1.notifyDataSetChanged();
+        dailyList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+
+        //adapter1.notifyDataSetChanged();
 
         //////////////////////////////////////////
 
         //Nhập dữ liệu cho biểu đồ thống kê tuần //
 
         weeklyPieChart = binding.weeklyPieChart;
-        PieDataSet piedataset2 = new PieDataSet(weeklydata1(),"");
+        PieDataSet piedataset2 = new PieDataSet(weeklydata1(getStartAndEndOfWeek(today).get(0),getStartAndEndOfWeek(today).get(1)),"");
         piedataset2.setColors(ColorTemplate.PASTEL_COLORS);
         PieData pieData2 = new PieData(piedataset2);
         weeklyPieChart.setData(pieData2);
@@ -153,23 +193,22 @@ public class StatisticsFragment extends Fragment {
         weeklyPieChart.setCenterText("weekly expense");
         weeklyPieChart.invalidate();
 
-        ArrayList<String> list2 = new ArrayList<>();
 
-        list2.add("Giải trí - 140k");
-        list2.add("Học tập - 220k");
-        list2.add("Ăn uống - 200k");
 
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list2);
+        ArrayList<UserExpense> list2 = new ArrayList<>();
+        list2 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(getStartAndEndOfWeek(today).get(0), getStartAndEndOfWeek(today).get(1));
         weeklyList = binding.listWeeklyExpense;
+        ExpensesRecycleViewAdapter adapter2 = new ExpensesRecycleViewAdapter(getContext(),list2);
         weeklyList.setAdapter(adapter2);
-        adapter2.notifyDataSetChanged();
+        weeklyList.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
         //////////////////////////////////////////
 
         //Nhập dữ liệu cho biểu đồ thống kê tháng //
+
         monthlyPiechart = binding.monthlyPieChart;
-        PieDataSet piedataset3 = new PieDataSet(monthlydata1(),"");
+        PieDataSet piedataset3 = new PieDataSet(monthlydata1(getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1)),"");
         piedataset3.setColors(colorClassArray);
         PieData pieData3 = new PieData(piedataset3);
         monthlyPiechart.setData(pieData3);
@@ -180,7 +219,7 @@ public class StatisticsFragment extends Fragment {
 
 
         monthlyLineChart = binding.monthlyLineChart;
-        LineDataSet lineDataSet32 = new LineDataSet(monthlyLine1(),"monthly expense");
+        LineDataSet lineDataSet32 = new LineDataSet(monthlyLine1(getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1)),"monthly expense");
         lineDataSet32.setColor(Color.RED);
 
         ArrayList<ILineDataSet> dataSetsmonth = new ArrayList<>();
@@ -188,7 +227,7 @@ public class StatisticsFragment extends Fragment {
         LineData lineData3 = new LineData(dataSetsmonth);
 
         final ArrayList<String> xLabelMonth = new ArrayList<>();
-        for (int i = 1; i<= 30; i++)
+        for (int i = 1; i<= getDaysOfMonth(currentMonth); i++)
         {
             xLabelMonth.add(String.valueOf(i));
         }
@@ -211,17 +250,14 @@ public class StatisticsFragment extends Fragment {
         monthlyLineChart.setData(lineData3);
         monthlyLineChart.invalidate();
 
-        ArrayList<String> list3 = new ArrayList<>();
-
-        list3.add("Điện nước - 300k");
-        list3.add("Tiền nhà  - 1000k");
-        list3.add("Tiền mua sắm  - 400k");
-        list3.add("Ăn uống - 1000k");
-
-        ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list3);
+        ArrayList<UserExpense> list3 = new ArrayList<>();
+        list3 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(getStartAndEndOfMonth(today).get(0),getStartAndEndOfMonth(today).get(1));
         monthlyList = binding.listMonthlyExpense;
+        ExpensesRecycleViewAdapter adapter3 = new ExpensesRecycleViewAdapter(getContext(),list3);
         monthlyList.setAdapter(adapter3);
-        adapter3.notifyDataSetChanged();
+        monthlyList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
 
 
         //////////////////////////////////////////
@@ -229,7 +265,7 @@ public class StatisticsFragment extends Fragment {
 
         //Nhập dữ liệu cho biểu đồ thống kê năm //
         yearlyPiechart = binding.yearlyPieChart;
-        PieDataSet piedataset4 = new PieDataSet(yearlydata1(),"");
+        PieDataSet piedataset4 = new PieDataSet(yearlydata1("1-1-"+year,"31-12-"+year),"");
         piedataset4.setColors(ColorTemplate.COLORFUL_COLORS);
         PieData pieData4 = new PieData(piedataset4);
         yearlyPiechart.setData(pieData4);
@@ -242,7 +278,7 @@ public class StatisticsFragment extends Fragment {
 
 
         yearlyLineChart = binding.yearlyLineChart;
-        LineDataSet lineDataSet4 = new LineDataSet(yearlyLine1(),"yearly expense");
+        LineDataSet lineDataSet4 = new LineDataSet(yearlyLine1("1-1-"+year,"31-12-"+year),"yearly expense");
         lineDataSet4.setColor(Color.BLUE);
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
@@ -281,17 +317,12 @@ public class StatisticsFragment extends Fragment {
         yearlyLineChart.setData(lineData);
         yearlyLineChart.invalidate();
 
-        ArrayList<String> list4 = new ArrayList<>();
-
-        list4.add("Điện nước - 3000k");
-        list4.add("Tiền nhà  - 10000k");
-        list4.add("Tiền mua sắm  - 500k");
-        list4.add("Ăn uống - 10000k");
-
-        ArrayAdapter<String> adapter4 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list4);
+        ArrayList<UserExpense> list4 = new ArrayList<>();
+        list4 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates("1-1-"+year,"31-12-"+year);
         yearlyList = binding.listYearlyExpense;
+        ExpensesRecycleViewAdapter adapter4 = new ExpensesRecycleViewAdapter(getContext(),list4);
         yearlyList.setAdapter(adapter4);
-        adapter4.notifyDataSetChanged();
+        yearlyList.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
 
@@ -300,120 +331,306 @@ public class StatisticsFragment extends Fragment {
         return root;
     }
 
-    private ArrayList<PieEntry> dailydata1(){
-        ArrayList<PieEntry> dataVals = new ArrayList<>();
-        dataVals.add(new PieEntry(30,"Bún bò"));
-        dataVals.add(new PieEntry(30,"Bún đậu"));
-        dataVals.add(new PieEntry(20,"Bánh tráng"));
+    private void dailyStatistic(String day){
+        dailyPieChart = binding.dailyPieChart;
 
+        PieDataSet piedataset = new PieDataSet(dailydata1(day),"");
+        piedataset.setColors(ColorTemplate.MATERIAL_COLORS);
+        PieData pieData = new PieData(piedataset);
+        dailyPieChart.setData(pieData);
+        dailyPieChart.setCenterTextSize(25);
+        dailyPieChart.setUsePercentValues(true);
+        dailyPieChart.setCenterText("daily expense");
+        dailyPieChart.invalidate();
+
+        ArrayList<UserExpense> list1 = new ArrayList<>();
+        list1 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(day,day);
+        dailyList = binding.listDailyExpense;
+        ExpensesRecycleViewAdapter adapter1 = new ExpensesRecycleViewAdapter(getContext(),list1);
+        dailyList.setAdapter(adapter1);
+        dailyList.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+    private void weeklyStatistic(String startDay, String endDay){
+        weeklyPieChart = binding.weeklyPieChart;
+        PieDataSet piedataset2 = new PieDataSet(weeklydata1(startDay,endDay),"");
+        piedataset2.setColors(ColorTemplate.PASTEL_COLORS);
+        PieData pieData2 = new PieData(piedataset2);
+        weeklyPieChart.setData(pieData2);
+        weeklyPieChart.setCenterTextSize(25);
+        weeklyPieChart.setUsePercentValues(true);
+        weeklyPieChart.setCenterText("weekly expense");
+        weeklyPieChart.invalidate();
+
+
+        ArrayList<UserExpense> list2 = new ArrayList<>();
+        list2 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
+        weeklyList = binding.listWeeklyExpense;
+        ExpensesRecycleViewAdapter adapter2 = new ExpensesRecycleViewAdapter(getContext(),list2);
+        weeklyList.setAdapter(adapter2);
+        weeklyList.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+    private void monthlyStatistic(String startDay, String endDay){
+        monthlyPiechart = binding.monthlyPieChart;
+        ArrayList<PieEntry> a = new ArrayList<>();
+        a= monthlydata1(startDay,endDay);
+        PieDataSet piedataset3 = new PieDataSet(a,"");
+        piedataset3.setColors(colorClassArray);
+        PieData pieData3 = new PieData(piedataset3);
+        monthlyPiechart.setData(pieData3);
+        monthlyPiechart.setCenterTextSize(25);
+        monthlyPiechart.setUsePercentValues(true);
+        monthlyPiechart.setCenterText("monthly expense");
+        monthlyPiechart.invalidate();
+
+
+        monthlyLineChart = binding.monthlyLineChart;
+        ArrayList<Entry> b = new ArrayList<>();
+        b = monthlyLine1(startDay,endDay);
+        LineDataSet lineDataSet32 = new LineDataSet(b,"monthly expense");
+        lineDataSet32.setColor(Color.RED);
+
+        ArrayList<ILineDataSet> dataSetsmonth = new ArrayList<>();
+        dataSetsmonth.add(lineDataSet32);
+        LineData lineData3 = new LineData(dataSetsmonth);
+
+        final ArrayList<String> xLabelMonth = new ArrayList<>();
+        for (int i = 1; i<= getDaysOfMonth(getMonthYearOfDate(startDay)); i++)
+        {
+            xLabelMonth.add(String.valueOf(i));
+        }
+
+        XAxis xAxis3 = monthlyLineChart.getXAxis();
+        xAxis3.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis3.setAxisMinimum(0f);
+        xAxis3.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return xLabelMonth.get((int) value % xLabelMonth.size());
+            }
+        });
+        YAxis leftAxis3 = monthlyLineChart.getAxisLeft();
+        leftAxis3.setAxisMinimum(0f);
+        YAxis rightAxis3 = monthlyLineChart.getAxisRight();
+        rightAxis3.setAxisMinimum(0f);
+
+        monthlyLineChart.setDrawGridBackground(false);
+        monthlyLineChart.setData(lineData3);
+        monthlyLineChart.invalidate();
+
+        ArrayList<UserExpense> list3 = new ArrayList<>();
+        list3 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay,endDay);
+        monthlyList = binding.listMonthlyExpense;
+        ExpensesRecycleViewAdapter adapter3 = new ExpensesRecycleViewAdapter(getContext(),list3);
+        monthlyList.setAdapter(adapter3);
+        monthlyList.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+    private void yearlyStatistic(String startDay, String endDay){
+        yearlyPiechart = binding.yearlyPieChart;
+        PieDataSet piedataset4 = new PieDataSet(yearlydata1(startDay, endDay),"");
+        piedataset4.setColors(ColorTemplate.COLORFUL_COLORS);
+        PieData pieData4 = new PieData(piedataset4);
+        yearlyPiechart.setData(pieData4);
+        yearlyPiechart.setCenterTextSize(25);
+        yearlyPiechart.setUsePercentValues(true);
+        yearlyPiechart.setCenterText("yearly expense");
+        yearlyPiechart.invalidate();
+
+
+
+
+        yearlyLineChart = binding.yearlyLineChart;
+        LineDataSet lineDataSet4 = new LineDataSet(yearlyLine1(startDay, endDay),"yearly expense");
+        lineDataSet4.setColor(Color.BLUE);
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet4);
+        LineData lineData = new LineData(dataSets);
+
+        final ArrayList<String> xLabel = new ArrayList<>();
+        xLabel.add("Jan");
+        xLabel.add("Feb");
+        xLabel.add("Mar");
+        xLabel.add("Apr");
+        xLabel.add("May");
+        xLabel.add("Jun");
+        xLabel.add("Jul");
+        xLabel.add("Aug");
+        xLabel.add("Sep");
+        xLabel.add("Oct");
+        xLabel.add("Nov");
+        xLabel.add("Dec");
+
+        XAxis xAxis = yearlyLineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAxisMinimum(0f);
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return xLabel.get((int) value % xLabel.size());
+            }
+        });
+        YAxis leftAxis42 = yearlyLineChart.getAxisLeft();
+        leftAxis42.setAxisMinimum(0f);
+        YAxis rightAxis42 = yearlyLineChart.getAxisRight();
+        rightAxis42.setAxisMinimum(0f);
+
+        yearlyLineChart.setDrawGridBackground(false);
+        yearlyLineChart.setData(lineData);
+        yearlyLineChart.invalidate();
+
+        ArrayList<UserExpense> list4 = new ArrayList<>();
+        list4 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
+        yearlyList = binding.listYearlyExpense;
+        ExpensesRecycleViewAdapter adapter4 = new ExpensesRecycleViewAdapter(getContext(),list4);
+        yearlyList.setAdapter(adapter4);
+        yearlyList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+    }
+    private String category(int type){
+        String category = new String();
+        if (type == 0) category = "FOOD_BEVERAGE";
+        else if (type == 1) category = "HEALTH";
+        else if (type == 2) category = "HOUSING";
+        else if (type == 3) category = "INVESMENT";
+        else if (type == 4) category = "TRANSPORT";
+        else if (type == 5) category = "TRAVEL";
+        else if (type == 6) category = "UNCATEGORIZED";
+        else category = "";
+        return category;
+    }
+
+    private ArrayList<PieEntry> dailydata1(String date){
+        ArrayList<PieEntry> dataVals = new ArrayList<>();
+        // Khai báo 1 ArrayList kiểu PieEntry
+        ArrayList<UserExpense> userExpenses = new ArrayList<>();
+        userExpenses = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(date, date);
+        // Lấy dữ liệu từ database để truyền vào 1 ArrayList kiểu UserExpense
+        int i = 0;
+        while (i < userExpenses.size()){
+            dataVals.add(new PieEntry((float)userExpenses.get(i).getAmount(),category(userExpenses.get(i).getType())));
+            i++;
+        }
+        //sử dụng hàm add() để thêm dữ liệu vừa lấy được vào list của biểu đồ
         return dataVals;
     }
-    private ArrayList<PieEntry> weeklydata1(){
+    private ArrayList<PieEntry> weeklydata1(String startDay, String endDay){
         ArrayList<PieEntry> dataVals = new ArrayList<>();
-        dataVals.add(new PieEntry(140,"giải trí"));
-        dataVals.add(new PieEntry(200,"ăn uống"));
-        dataVals.add(new PieEntry(220,"học tập"));
+        ArrayList<UserExpense> userExpenses = new ArrayList<>();
+        userExpenses = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
 
+        int i = 0;
+        while (i < userExpenses.size()){
+            dataVals.add(new PieEntry((float)userExpenses.get(i).getAmount(),category(userExpenses.get(i).getType())));
+            i++;
+        }
         return dataVals;
     }
 
-    private ArrayList<PieEntry> monthlydata1(){
+    private ArrayList<PieEntry> monthlydata1(String startDay, String endDay){
         ArrayList<PieEntry> dataVals = new ArrayList<>();
-        dataVals.add(new PieEntry(300,"Điện nước"));
-        dataVals.add(new PieEntry(1000,"Tiền nhà"));
-        dataVals.add(new PieEntry(400,"tiền mua sắm"));
-        dataVals.add(new PieEntry(1000,"tiền ăn uống"));
+        ArrayList<UserExpense> userExpenses = new ArrayList<>();
+        userExpenses = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
+
+        int i = 0;
+        while (i < userExpenses.size()){
+            dataVals.add(new PieEntry((float)userExpenses.get(i).getAmount(),category(userExpenses.get(i).getType())));
+            i++;
+        }
         return dataVals;
     }
+    private int getDaysOfMonth(String monthYear) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-yyyy");
+            Date date = sdf.parse(monthYear);
 
-    private ArrayList<BarEntry> monthlyBar1(){
-        ArrayList<BarEntry> datavals = new ArrayList<>();
-        datavals.add(new BarEntry(1,2000));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
 
-        return  datavals;
-    }
-    private ArrayList<BarEntry> monthlybar2(){
-        ArrayList<BarEntry> datavals = new ArrayList<>();
-        datavals.add(new BarEntry(2,2500));
-
-        return  datavals;
-    }
-
-    private ArrayList<PieEntry> yearlydata1(){
-        ArrayList<PieEntry> dataVals = new ArrayList<>();
-        dataVals.add(new PieEntry(3000,"Điện nước"));
-        dataVals.add(new PieEntry(10000,"Tiền nhà"));
-        dataVals.add(new PieEntry(5000,"tiền mua sắm"));
-        dataVals.add(new PieEntry(10000,"tiền ăn uống"));
-        return dataVals;
+            return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        } catch (Exception e) {
+            return -1; // Trả về giá trị âm để báo hiệu lỗi
+        }
     }
 
-    private ArrayList<BarEntry> yearlyBar1(){
-        ArrayList<BarEntry> datavals = new ArrayList<>();
-        datavals.add(new BarEntry(1,6000));
+    private String getMonthYearOfDate(String date) {
 
-        return  datavals;
+        while(true){
+            char a = date.charAt(0);
+            if(a != '-') date = date.substring(1);
+            else {
+                date = date.substring(1);
+                break;
+            }
+        }
+        return date;
     }
-    private ArrayList<BarEntry> yearlybar2(){
-        ArrayList<BarEntry> datavals = new ArrayList<>();
-        datavals.add(new BarEntry(2,8000));
+    private  double getTotalAmountOfDay(String date) {
 
-        return  datavals;
+        ArrayList<UserExpense> expenses = dbHandler.getInstance(getContext()).fetchExpensesByDate(date);
+        double totalAmount = 0.0;
+        for (UserExpense expense : expenses) {
+            totalAmount += expense.getAmount();
+        }
+        return totalAmount;
     }
-    private ArrayList<Entry> yearlyLine1(){
+
+
+    private ArrayList<Entry> monthlyLine1(String startDay, String endDay){
         ArrayList<Entry> datavals = new ArrayList<>();
-        datavals.add(new Entry(0,6000));
-        datavals.add(new Entry(1,7658));
-        datavals.add(new Entry(2,8650));
-        datavals.add(new Entry(3,6540));
-        datavals.add(new Entry(4,7590));
-        datavals.add(new Entry(5,9486));
-        datavals.add(new Entry(6,8126));
-        datavals.add(new Entry(7,7458));
-        datavals.add(new Entry(8,6958));
-        datavals.add(new Entry(9,5798));
-        datavals.add(new Entry(10,9456));
-        datavals.add(new Entry(11,6254));
+
+        String thisMonth = getMonthYearOfDate(startDay);
+        for(int i = 1; i <= getDaysOfMonth(thisMonth);i++){
+            String date = Integer.toString(i)+"-" + thisMonth;
+            double totalAmount = getTotalAmountOfDay(date);
+            datavals.add(new Entry(i,(float) totalAmount));
+        }
 
         return datavals;
     }
-    private ArrayList<Entry> monthlyLine1(){
+
+
+    private ArrayList<PieEntry> yearlydata1(String startDay, String endDay){
+        ArrayList<PieEntry> dataVals = new ArrayList<>();
+
+        ArrayList<UserExpense> userExpenses = new ArrayList<>();
+        userExpenses = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
+
+        int i = 0;
+        while (i < userExpenses.size()){
+            dataVals.add(new PieEntry((float)userExpenses.get(i).getAmount(),category(userExpenses.get(i).getType())));
+            i++;
+        }
+        return dataVals;
+    }
+    private String getLastFourChars(String s) {
+        if (s.length() > 4) {
+            return s.substring(s.length() - 4);
+        } else {
+            return s;
+        }
+    }
+
+    private  double getTotalAmountOfMonth(String month){
+        double total = 0.0;
+        for(int i = 1; i < getDaysOfMonth(month); i++)
+        {
+            String date = Integer.toString(i) + "-" + month;
+            total += getTotalAmountOfDay(date);
+
+        }
+        return total;
+    }
+    private ArrayList<Entry> yearlyLine1(String startDay, String endDay){
         ArrayList<Entry> datavals = new ArrayList<>();
+        String year = getLastFourChars(startDay);
 
-        datavals.add(new Entry(1,7658));
-        datavals.add(new Entry(2,8650));
-        datavals.add(new Entry(3,6540));
-        datavals.add(new Entry(4,7590));
-        datavals.add(new Entry(5,9486));
-        datavals.add(new Entry(6,8126));
-        datavals.add(new Entry(7,7458));
-        datavals.add(new Entry(8,6958));
-        datavals.add(new Entry(9,5798));
-        datavals.add(new Entry(10,2615));
-        datavals.add(new Entry(11,4567));
-        datavals.add(new Entry(12,3455));
-        datavals.add(new Entry(13,5478));
-        datavals.add(new Entry(14,8654));
-        datavals.add(new Entry(15,5687));
-        datavals.add(new Entry(16,5434));
-        datavals.add(new Entry(17,4577));
-        datavals.add(new Entry(18,9787));
-        datavals.add(new Entry(19,5465));
-        datavals.add(new Entry(20,5448));
-        datavals.add(new Entry(21,3214));
-        datavals.add(new Entry(22,1124));
-        datavals.add(new Entry(23,4578));
-        datavals.add(new Entry(24,5456));
-        datavals.add(new Entry(25,4568));
-        datavals.add(new Entry(26,8795));
-        datavals.add(new Entry(27,5786));
-        datavals.add(new Entry(28,3456));
-        datavals.add(new Entry(29,5687));
-        datavals.add(new Entry(30,3456));
-        datavals.add(new Entry(31,5338));
-
+        for(int i = 0; i < 12; i++)
+        {   String month = Integer.toString(i+1) + "-"+year;
+            datavals.add(new Entry((float)i,(float)getTotalAmountOfMonth(month)));
+        }
         return datavals;
     }
+
     private void showScreen1() {
         screen1.setVisibility(View.VISIBLE);
         screen2.setVisibility(View.GONE);
@@ -455,9 +672,36 @@ public class StatisticsFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // Xử lý sự kiện chọn ngày tháng năm ở đây
                         TextView displayDate = binding.displayDate;
-                        String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-                        displayDate.setText("Selected Date: " + selectedDate);
+                        String selectedDate = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                        displayDate.setText(selectedDate);
+                        dailyStatistic(selectedDate);
                         Toast.makeText(getActivity(), "Selected Date: " + selectedDate, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                currentYear,
+                currentMonth,
+                currentDay);
+
+        datePickerDialog.show();
+    }
+    private void showWeekPickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentMonth = calendar.get(Calendar.MONTH);
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // Xử lý sự kiện chọn ngày tháng năm ở đây
+
+                        String selectedDate = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                        ArrayList<String> week = getStartAndEndOfWeek(selectedDate);
+                        displayWeek.setText(week.get(0)+ " -- "+week.get(1));
+                        weeklyStatistic(week.get(0),week.get(1));
+                        //Toast.makeText(getActivity(), "Selected Date: " + selectedDate, Toast.LENGTH_SHORT).show();
                     }
                 },
                 currentYear,
@@ -478,9 +722,11 @@ public class StatisticsFragment extends Fragment {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // Xử lý sự kiện chọn ngày tháng năm ở đây
-                        TextView displayDate = binding.displayMonth;
-                        String selectedDate = (monthOfYear + 1) + "/" + year;
-                        displayDate.setText("Selected Month: " + selectedDate);
+
+                        String selectedDate = (monthOfYear + 1) + "-" + year;
+                        ArrayList<String> month = getStartAndEndOfMonth(selectedDate);
+                        displayMonth.setText(month.get(0)+ " -- "+month.get(1));
+                        monthlyStatistic(month.get(0),month.get(1));
                         Toast.makeText(getActivity(), "Selected Month: " + selectedDate, Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -502,9 +748,10 @@ public class StatisticsFragment extends Fragment {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // Xử lý sự kiện chọn ngày tháng năm ở đây
-                        TextView displayDate = binding.displayMonth;
+                        TextView displayDate = binding.displayYear;
                         String selectedDate = "" + year;
-                        displayDate.setText("Selected Year: " + selectedDate);
+                        yearlyStatistic("1-1-"+year, "31-12-"+year);
+                        displayDate.setText(selectedDate);
                         Toast.makeText(getActivity(), "Selected Year: " + selectedDate, Toast.LENGTH_SHORT).show();
                     }
                 },
@@ -513,6 +760,62 @@ public class StatisticsFragment extends Fragment {
                 currentDay);
 
         datePickerDialog.show();
+    }
+    private ArrayList<String> getStartAndEndOfWeek(String date) {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        Date chosenDate;
+        try {
+            chosenDate = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(chosenDate);
+
+        // Đặt calendar về ngày đầu tuần (Thứ Hai)
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+            calendar.add(Calendar.DATE, -1);
+        }
+        String startOfWeek = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
+
+        // Đặt calendar về ngày cuối tuần (Chủ Nhật)
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            calendar.add(Calendar.DATE, 1);
+        }
+        String endOfWeek = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
+
+        ArrayList<String> week = new ArrayList<>();
+        week.add(startOfWeek);
+        week.add(endOfWeek);
+        return week;
+    }
+    private ArrayList<String> getStartAndEndOfMonth(String monthYear) {
+        SimpleDateFormat format = new SimpleDateFormat("MM-yyyy");
+        Date chosenMonth;
+        try {
+            chosenMonth = format.parse(monthYear);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(chosenMonth);
+
+        // Đặt calendar về ngày đầu tháng
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        String startOfMonth = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
+
+        // Đặt calendar về ngày cuối tháng
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        String endOfMonth = calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.YEAR);
+
+        ArrayList<String> month = new ArrayList<>();
+        month.add(startOfMonth);
+        month.add(endOfMonth);
+        return month;
     }
 
     @Override

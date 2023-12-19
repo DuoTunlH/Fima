@@ -12,31 +12,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:id="@+id/LLsigUp"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/size10dp"
-            android:padding="@dimen/size10dp"
-            android:text="Sign Up"
             android:textSize="35sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:padding="@dimen/size10dp"
+            android:layout_marginBottom="@dimen/size10dp"
+            android:text="Sign Up" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:weightSum="2"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/editFirstName"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/size10dp"
-                android:layout_weight="1"
                 android:drawableLeft="@drawable/user"
                 android:drawablePadding="@dimen/size10dp"
                 android:ems="10"
@@ -44,13 +42,12 @@
                 android:inputType="text"
                 android:padding="@dimen/size10dp"
                 android:textColorHint="@color/gray" />
-
             <EditText
                 android:id="@+id/editLastName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/size10dp"
                 android:layout_weight="1"
+                android:layout_margin="@dimen/size10dp"
                 android:drawablePadding="@dimen/size10dp"
                 android:ems="10"
                 android:hint="@string/lastname"
@@ -100,31 +97,15 @@
             android:password="true"
             android:textColorHint="@color/gray" />
 
-        <LinearLayout
+        <CheckBox
+            android:id="@+id/checkBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/size10dp"
-                android:text="I agree to the"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvRules"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size10dp"
-                android:text="TERMS"
-                android:textColor="@color/blue500"
-                android:textSize="@dimen/size16sp"
-                android:textStyle="italic">
-
-            </TextView>
-        </LinearLayout>
+            android:layout_margin="@dimen/size10dp"
+            android:text="I agree to the rules"
+            android:textColor="@color/blue500"
+            android:textStyle="italic"
+            android:textSize="15dp" />
 
         <Button
             android:id="@+id/btnSignUp"
@@ -133,7 +114,6 @@
             android:layout_margin="@dimen/size10dp"
             android:background="@color/blue500"
             android:text="Sign Up" />
-
         <Button
             android:id="@+id/btnBackLogIn"
             android:layout_width="match_parent"
