@@ -20,24 +20,36 @@ import java.util.ArrayList;
 public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.viewholder> {
     ArrayList<Target> items;
     Context context;
+    private OnItemClickListener listener;
 
-    public TargetAdapter(ArrayList<Target> items) {
+    public TargetAdapter(Context context, ArrayList<Target> items, OnItemClickListener listener) {
+        this.context = context;
         this.items = items;
+        this.listener = listener;
     }
-
+    public void setTypeTarget(ArrayList<Target> targets) {
+        items = targets;
+        notifyDataSetChanged();
+    }
+    public interface OnItemClickListener {
+        void onItemClick(Target item);
+    }
     @NonNull
     @Override
     public viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         View inflate = LayoutInflater.from(context).inflate(R.layout.item_list_target, parent, false);
         return new viewholder(inflate);
-
     }
-
     @Override
     public void onBindViewHolder(@NonNull TargetAdapter.viewholder holder, int position) {
         holder.title.setText(items.get(position).getPlanName());
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(items.get(position));
+            }
+        });
         int a = (int) (items.get(position).getSavedBudget() / items.get(position).getTotalBudget() * 100);
         System.out.println(items.get(position).getSavedBudget());
         holder.processPercent.setText(a + "%");

@@ -4,41 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.UpdateTarget.UpdateTarget">
 
-<!--    sửa nội dung mục tiêu-->
-
-    <ImageView
-        android:id="@+id/ic_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/icon_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/ic_bell"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_bell"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ic_back"
-
-        />
+    <!--    sửa nội dung mục tiêu-->
 
     <TextView
         android:id="@+id/planname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
         android:text="Tên mục tiêu"
         android:textColor="#1B1B4E"
         android:textSize="38sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ic_back" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -63,23 +44,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="6"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="6">
 
             <EditText
-                android:id="@+id/editTextText2"
+                android:id="@+id/editTextTotalBudget"
                 android:layout_width="0dp"
-                android:layout_weight="3"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_weight="3"
                 android:hint="0.00"
                 android:inputType="text" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sửa" />
         </LinearLayout>
 
         <TextView
@@ -92,21 +67,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="6"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="6">
+
             <EditText
-                android:id="@+id/editTextText3"
+                android:id="@+id/editTextSavedBudget"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
                 android:layout_marginTop="10dp"
-                android:inputType="text"
-                android:hint="0.00" />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sửa" />
+                android:layout_weight="3"
+                android:hint="0.00"
+                android:inputType="text" />
+
         </LinearLayout>
 
         <TextView
@@ -116,7 +88,7 @@
             android:text="Mức độ hoàn thành" />
 
         <ProgressBar
-            android:id="@+id/progressBar2"
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,7 +108,7 @@
             android:weightSum="6">
 
             <EditText
-                android:id="@+id/editTextText4"
+                android:id="@+id/editTextTextDeadline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -222,12 +194,12 @@
         app:layout_constraintTop_toBottomOf="@id/linearLayout">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnUpdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_weight="1"
-            android:text="Tạo" />
+            android:text="Update" />
 
         <Space
             android:layout_width="wrap_content"
@@ -235,11 +207,11 @@
             android:layout_weight="3" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Xóa" />
+            android:text="Back" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

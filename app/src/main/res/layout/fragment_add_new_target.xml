@@ -2,42 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_new_target"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.AddNewTarget.AddNewTarget">
-<!--Thêm mục tiêu mới -->
-    <ImageView
-        android:id="@+id/ic_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:src="@drawable/icon_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/ic_bell"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_bell"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ic_back"
-
-        />
+    <!--Thêm mục tiêu mới -->
 
     <TextView
         android:id="@+id/planname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
-        android:text="Thêm mục tiêu mới"
+        android:text="Add new Target"
         android:textColor="#1B1B4E"
         android:textSize="38sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ic_back" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -55,10 +37,10 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mức độ hoàn thành" />
+            android:text="Degree of completion" />
 
         <ProgressBar
-            android:id="@+id/progressBar2"
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,54 +52,54 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Tên kế hoạch" />
+            android:text="What is your target's name?" />
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
             android:inputType="text"
-            android:text="Name" />
+            android:text="" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Kinh phí cần chuẩn bị" />
+            android:text="What amount of money do you plan to prepare for this target?" />
 
         <EditText
-            android:id="@+id/editTextText2"
+            android:id="@+id/editTextTotalBudget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
             android:inputType="text"
-            android:text="Name" />
+            android:text="" />
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Kinh phí đã có" />
+            android:text="What amount of money do you had to prepare for this target?" />
 
         <EditText
-            android:id="@+id/editTextText3"
+            android:id="@+id/editTextSavedBudget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
             android:inputType="text"
-            android:text="Name" />
+            android:text="" />
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ngày hạn" />
+            android:text="What is the deadline for this target?" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -126,15 +108,15 @@
             android:weightSum="6">
 
             <EditText
-                android:id="@+id/editTextText4"
+                android:id="@+id/editTextDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:inputType="text"
-                android:hint="dd/mm/yy" />
+                android:hint="dd/mm/yy"
+                android:inputType="text" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/imageViewDatePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -143,22 +125,23 @@
         </LinearLayout>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Loại mục tiêu" />
+                android:text="What type of your target?" />
+
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
 
 
         </LinearLayout>
@@ -168,7 +151,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Mức độ ưu tiên" />
+            android:text="Priority of target ?" />
+
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
@@ -210,12 +194,12 @@
         app:layout_constraintTop_toBottomOf="@id/linearLayout">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_create"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_weight="1"
-            android:text="Tạo" />
+            android:text="Create" />
 
         <Space
             android:layout_width="wrap_content"
@@ -223,11 +207,11 @@
             android:layout_weight="3" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Xóa" />
+            android:text="Delete" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
