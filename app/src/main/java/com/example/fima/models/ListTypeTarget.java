@@ -1,10 +1,14 @@
 package com.example.fima.models;
 
-public class ListTypeTarget {
+import com.example.fima.Adapter.TargetAdapter;
+
+import java.io.Serializable;
+
+public class ListTypeTarget implements Serializable {
     private String imgpath;
     private String title;
 
-    public ListTypeTarget(String imgpath, String title) {
+    public ListTypeTarget(String imgpath, String title ) {
         this.imgpath = imgpath;
         this.title = title;
     }

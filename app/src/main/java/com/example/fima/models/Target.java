@@ -1,35 +1,37 @@
 package com.example.fima.models;
 
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.Date;
-import java.util.Objects;
-
-public class Target{
-    private String planCode;
-    private String  planName;
-    // tổng chi phí cần chuẩn bị
+public class Target {
+    private int id;
+    private String planName;
     private double totalBudget;
     private double savedBudget;
-    private Date deadline;
+    private String deadline;
     // mức dộ ưu tiên
     private int priorityLevel;
 
     // loại mục tiêu vừa, nhỏ, to
     private String targetType;
     private String imgSrc;
+    private static Target instance;
 
     public Target() {
     }
 
-    public Target(String planCode, String planName, double totalBudget, double savedBudget, Date deadline, int priorityLevel, String targetType, String imgSrc) {
-        this.planCode = planCode;
+    public static synchronized Target getInstance() {
+        if (instance == null) {
+            instance = new Target();
+        }
+        return instance;
+    }
+
+    public Target(int id, String planName, double totalBudget, double savedBudget, String deadline, String targetType, int priorityLevel, String imgSrc) {
+        this.id = id;
         this.planName = planName;
         this.totalBudget = totalBudget;
         this.savedBudget = savedBudget;
         this.deadline = deadline;
-        this.priorityLevel = priorityLevel;
         this.targetType = targetType;
+        this.priorityLevel = priorityLevel;
         this.imgSrc = imgSrc;
     }
 
@@ -41,13 +43,10 @@ public class Target{
         this.imgSrc = imgSrc;
     }
 
-    public String getPlanCode() {
-        return planCode;
+    public int getID() {
+        return id;
     }
 
-    public void setPlanCode(String planCode) {
-        this.planCode = planCode;
-    }
 
     public String getPlanName() {
         return planName;
@@ -73,11 +72,11 @@ public class Target{
         this.savedBudget = savedBudget;
     }
 
-    public Date getDeadline() {
+    public String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Date deadline) {
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
     }
 
@@ -96,4 +95,6 @@ public class Target{
     public void setTargetType(String targetType) {
         this.targetType = targetType;
     }
+
+
 }

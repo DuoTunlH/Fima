@@ -4,41 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.TargetDetail.TargetDetail">
 
-<!--    Chi tiết mục tiêu -->
-    <ImageView
-        android:id="@+id/ic_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:src="@drawable/icon_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/ic_bell"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_bell"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ic_back"
-
-        />
+    <!--    Chi tiết mục tiêu -->
 
     <TextView
-        android:id="@+id/planname"
+        android:id="@+id/planName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
-        android:text="Mục tiêu mua điện thoại"
+        android:text="Target's Name"
         android:textColor="#1B1B4E"
         android:textSize="38sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ic_back" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -48,19 +29,38 @@
         android:layout_marginTop="16dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/planname">
+        app:layout_constraintTop_toBottomOf="@+id/planName">
 
-        <TextView
-            android:id="@+id/PlanName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tên kế hoạch : " />
 
         <TextView
             android:id="@+id/DeadLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ngày hạn : " />
+            android:text="DeadLine : " />
+
+        <TextView
+            android:id="@+id/textViewTotalBudget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TotalBudget you plan to prepare:" />
+
+        <TextView
+            android:id="@+id/textViewSavedBudget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SavedBudget you prepared :" />
+
+        <TextView
+            android:id="@+id/textViewType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Target type :" />
+
+        <TextView
+            android:id="@+id/textViewPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Priority :" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
-                android:text="Số kinh phí cần chuẩn bị" />
+                android:text="Budget amount to be prepared" />
 
         </LinearLayout>
 
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_weight="1"
-                android:text="Số kinh phí đã có " />
+                android:text="budget available" />
 
         </LinearLayout>
 
@@ -123,10 +123,11 @@
             android:weightSum="5">
 
             <Button
+                android:id="@+id/btnUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Đóng" />
+                android:text="Update" />
 
             <Space
                 android:layout_width="0dp"
@@ -134,22 +135,23 @@
                 android:layout_weight="2" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sửa" />
+                android:text="Delete" />
         </LinearLayout>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/progress_percent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="186dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginStart="180dp"
+        android:layout_marginTop="180dp"
         android:text="60%"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/linearLayout2"
         app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
 
