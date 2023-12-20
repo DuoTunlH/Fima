@@ -59,7 +59,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class    StatisticsFragment extends Fragment {
+public class   StatisticsFragment extends Fragment {
 
     private FragmentStatisticsBinding binding;
     private DBHandler dbHandler;

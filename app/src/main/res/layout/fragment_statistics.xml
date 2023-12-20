@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#0ff0ff"
+            android:background="@color/white"
             >
             <TextView
                 android:id="@+id/displayweek"
@@ -161,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#0ff0f7"
+            android:background="@color/white"
             >
             <TextView
                 android:id="@+id/displayMonth"
@@ -255,8 +255,6 @@
 
         </LinearLayout>
     </ScrollView>
-
-
     <TextView
         android:id="@+id/text_dashboard"
         android:layout_width="0dp"
