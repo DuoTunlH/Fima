@@ -84,7 +84,6 @@ public class LogInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = etLoginUser.getText().toString();
                 String password = etLoginPass.getText().toString();
-
                 DBHandler dbHandler = DBHandler.getInstance(LogInActivity.this);
                 Map<String, String> userData = dbHandler.checkLogin(email, User.getInstance().hashPassword(password));
 
@@ -99,6 +98,7 @@ public class LogInActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(LogInActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(LogInActivity.this, "Wrong email or password!", Toast.LENGTH_SHORT).show();
                 }

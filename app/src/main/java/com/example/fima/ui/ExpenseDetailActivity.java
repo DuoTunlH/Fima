@@ -141,6 +141,10 @@ public class ExpenseDetailActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(amountEdt.getText().toString().isEmpty()){
+                    Toast.makeText(ExpenseDetailActivity.this, "Please input amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 expense = new UserExpense(expense.getId(), User.getInstance().getId(),spinner.getSelectedItemPosition(), descriptionEdt.getText().toString(),dateEdt.getText().toString(),Double.valueOf(amountEdt.getText().toString()));
                 DBHandler.getInstance(ExpenseDetailActivity.this).updateExpense(expense);
                 Toast.makeText(ExpenseDetailActivity.this, "Expense edited successfully", Toast.LENGTH_SHORT).show();
@@ -165,6 +169,7 @@ public class ExpenseDetailActivity extends AppCompatActivity {
                 alertDialog.show();
           }
         });
+
     }
     private void hideSoftKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);

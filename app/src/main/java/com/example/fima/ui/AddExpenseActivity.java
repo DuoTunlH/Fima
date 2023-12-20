@@ -69,7 +69,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
                         dateEdt.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-
                     }
                 },
                 year, month, day);
@@ -129,7 +128,33 @@ public class AddExpenseActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserExpense expense = new UserExpense(0, User.getInstance().getId(),spinner.getSelectedItemPosition(), descriptionEdt.getText().toString(),dateEdt.getText().toString(),Double.valueOf(amountEdt.getText().toString()));
+                if(amountEdt.getText().toString().isEmpty()){
+                    Toast.makeText(AddExpenseActivity.this, "Please input money", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                 UserExpense expense = new UserExpense(
+                        0,
+                        User.getInstance().getId(),
+                         spinner.getSelectedItemPosition(),
+                        descriptionEdt.getText().toString(),
+                        dateEdt.getText().toString(),
+                        Double.valueOf(amountEdt.getText().toString())
+                );
+
+                DBHandler.getInstance(AddExpenseActivity.this).addExpense(expense);
+                finish();
+                Toast.makeText(AddExpenseActivity.this, "Expense added successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               if(amountEdt.getText().toString().isEmpty()){
+                   Toast.makeText(AddExpenseActivity.this, "Please input amount", Toast.LENGTH_SHORT).show();
+                   return;
+               }
+                UserExpense expense = new UserExpense(User.getInstance().getId(), User.getInstance().getId(),spinner.getSelectedItemPosition(), descriptionEdt.getText().toString(),dateEdt.getText().toString(),Double.valueOf(amountEdt.getText().toString()));
                 DBHandler.getInstance(AddExpenseActivity.this).addExpense(expense);
                 finish();
                 Toast.makeText(AddExpenseActivity.this, "Expense added successfully", Toast.LENGTH_SHORT).show();
@@ -144,3 +169,4 @@ public class AddExpenseActivity extends AppCompatActivity {
         }
     }
 }
+

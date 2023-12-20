@@ -94,13 +94,12 @@
 
             </androidx.cardview.widget.CardView>
 
-            <ListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listDailyExpense"
                 android:layout_width="match_parent"
                 android:layout_height="600dp"
 
                 android:layout_marginTop="10dp" />
-
 
 
         </LinearLayout>
@@ -142,7 +141,7 @@
 
             </androidx.cardview.widget.CardView>
 
-            <ListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listWeeklyExpense"
                 android:layout_width="match_parent"
                 android:layout_height="600dp"
@@ -193,7 +192,7 @@
 
             </androidx.cardview.widget.CardView>
 
-            <ListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listMonthlyExpense"
                 android:layout_width="match_parent"
                 android:layout_height="600dp"
@@ -248,7 +247,7 @@
 
             </androidx.cardview.widget.CardView>
 
-            <ListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/listYearlyExpense"
                 android:layout_width="match_parent"
                 android:layout_height="600dp"

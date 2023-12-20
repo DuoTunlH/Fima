@@ -7,9 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -235,6 +239,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void addExpense(UserExpense expense){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
+        cv.put(USER_ID, expense.getUserId());
         cv.put(TYPE, expense.getType());
         cv.put(AMOUNT, expense.getAmount());
         cv.put(DATE, expense.getDate());
@@ -265,7 +270,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<UserExpense> fetchExpensesByDate(String date){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor
-                = db.rawQuery("SELECT * FROM " + USER_EXPENSES + " WHERE " + DATE + " = " + "'"+date+"'", null);
+                = db.rawQuery("SELECT * FROM " + USER_EXPENSES + " WHERE "+ USER_ID + " = " + "'" + User.getInstance().getId()+"'" + " AND " + DATE + " = " + "'"+date+"'", null);
 
         ArrayList<UserExpense> expenses
                 = new ArrayList<>();
@@ -285,4 +290,54 @@ public class DBHandler extends SQLiteOpenHelper {
         return expenses;
     }
 
+    private static String getNextDay(String dateString) {
+        try {
+            // Định dạng ngày
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            Date date = sdf.parse(dateString);
+
+            // Lấy ngày tiếp theo
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.DATE, 1);
+
+            return sdf.format(calendar.getTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public ArrayList<UserExpense> fetchExpensesBetweenDates(String startDate, String endDate){
+
+
+        ArrayList<UserExpense> expenses
+                = new ArrayList<>();
+        String date = startDate;
+        while (!date.equals(getNextDay(endDate))){
+            expenses.addAll(fetchExpensesByDate(date));
+            date = getNextDay(date);
+        }
+
+        Collections.sort(expenses, new Comparator<UserExpense>() {
+            @Override
+            public int compare(UserExpense e1, UserExpense e2) {
+                return Integer.compare(e1.getType(), e2.getType());
+            }
+        });
+
+        for (UserExpense expense : expenses) {
+            expense.setDescription("");
+        }
+        int i = 0;
+        while (i < expenses.size()-1){
+            if(expenses.get(i).getType() == expenses.get(i+1).getType()) {
+                expenses.get(i).setAmount(expenses.get(i).getAmount()+expenses.get(i+1).getAmount());
+
+                expenses.remove(i+1);
+            }
+            else i++;
+        }
+
+        return expenses;
+    }
 }
