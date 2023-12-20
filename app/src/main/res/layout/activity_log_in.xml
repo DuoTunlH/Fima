@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LLogIn"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,11 +13,11 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="35sp"
-        android:textStyle="bold"
-        android:padding="@dimen/size10dp"
         android:layout_marginBottom="@dimen/size10dp"
-        android:text="Log In" />
+        android:padding="@dimen/size10dp"
+        android:text="Log In"
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etUserLogin"
@@ -63,10 +64,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="italic"
-            android:textColor="@color/blue500"
             android:gravity="center"
-            android:text="@string/ForgetPass" />
+            android:text="@string/ForgetPass"
+            android:textColor="@color/blue500"
+            android:textStyle="italic" />
     </LinearLayout>
 
     <Button
@@ -86,21 +87,21 @@
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="right"
             android:paddingRight="@dimen/size10dp"
-            android:layout_weight="1"
-            android:textSize="@dimen/size16sp"
-            android:text="Don't have an account?" />
+            android:text="Don't have an account?"
+            android:textSize="@dimen/size16sp" />
 
         <TextView
             android:id="@+id/tvNavigateSignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="italic"
+            android:text="@string/tvSignIn"
             android:textColor="@color/blue500"
             android:textSize="@dimen/size16sp"
-            android:text="@string/tvSignIn" />
+            android:textStyle="italic" />
     </LinearLayout>
 
 
