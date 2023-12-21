@@ -85,7 +85,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="5dp">
+                android:layout_margin="10dp">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/dailyPieChart"
@@ -132,7 +132,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="5dp">
+                android:layout_margin="10dp">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/weeklyPieChart"
@@ -172,7 +172,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="5dp">
+                android:layout_margin="10dp">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/monthlyPieChart"
@@ -183,7 +183,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="5dp">
+                android:layout_margin="10dp">
 
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/monthlyLineChart"
@@ -214,7 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#0ff0f0"
+            android:background="@color/white"
             >
             <TextView
                 android:id="@+id/displayYear"
@@ -225,12 +225,14 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="5dp">
+                android:layout_margin="10dp">
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/yearlyPieChart"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_margin="0dp"
+                    />
 
             </androidx.cardview.widget.CardView>
 
@@ -238,7 +240,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="5dp">
+                android:layout_margin="10dp"
+                >
 
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/yearlyLineChart"
