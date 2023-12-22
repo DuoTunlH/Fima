@@ -72,6 +72,15 @@ public class   StatisticsFragment extends Fragment {
     LineChart yearlyLineChart, monthlyLineChart;
 
     RecyclerView  dailyList, weeklyList, monthlyList, yearlyList;
+    int[] colorIntArray = new int[]{
+            Color.parseColor("#FF9800"),
+            Color.parseColor("#F41414"),
+            Color.parseColor("#2196F3"),
+            Color.parseColor("#8BC34A"),
+            Color.parseColor("#9C27B0"),
+            Color.parseColor("#00BCD4"),
+            Color.parseColor("#000000")
+    };
     int[] colorClassArray = new int[]{Color.LTGRAY, Color.BLUE, Color.CYAN, Color.DKGRAY, Color.GREEN, Color.MAGENTA, Color.RED};
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -104,11 +113,11 @@ public class   StatisticsFragment extends Fragment {
         String currentMonth = month + "-" + year;
 
 
-        displayDate.setText(today);
+        displayDate.setText(" Current day: "+today);
         String currentWeek = getStartAndEndOfWeek(today).get(0)+" -- "+getStartAndEndOfWeek(today).get(1);
-        displayWeek.setText(currentWeek);
-        displayMonth.setText(currentMonth);
-        displayYear.setText(year);
+        displayWeek.setText(" "+currentWeek);
+        displayMonth.setText(" Current month: "+currentMonth);
+        displayYear.setText(" Current year: "+year);
 
 
         btnDaily = binding.btndaily;
@@ -157,20 +166,22 @@ public class   StatisticsFragment extends Fragment {
         //Nhập dữ liệu cho biểu đồ thống kê ngày //
         dailyPieChart = binding.dailyPieChart; // lấy ra biểu đồ từ giao diện thông qua Id
         PieDataSet piedataset = new PieDataSet(dailydata1(today),"");
+
         // truyền vào dữ liệu từ phương thức đã xây dựng
-        piedataset.setColors(ColorTemplate.MATERIAL_COLORS);
+        piedataset.setColors(getColorWithDate(today,today));
         // cài đặt màu sắc cho biểu đổ
         PieData pieData = new PieData(piedataset);
         dailyPieChart.setData(pieData);
-        dailyPieChart.setCenterTextSize(25);
+        dailyPieChart.setCenterTextSize(22);
         dailyPieChart.setUsePercentValues(true);
-        dailyPieChart.setCenterText("daily expense");
+        dailyPieChart.setCenterText("Total: "+getTotalAmount(today,today)+" USD");
         // cài đặt các yếu tố liên quan
         dailyPieChart.invalidate();
 
         ArrayList<UserExpense> list1 = new ArrayList<>();
         list1 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(today,today);
         dailyList = binding.listDailyExpense;
+        addPercent(list1,today,today);
         ExpensesRecycleViewAdapter adapter1 = new ExpensesRecycleViewAdapter(getContext(),list1);
         dailyList.setAdapter(adapter1);
         dailyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -185,12 +196,12 @@ public class   StatisticsFragment extends Fragment {
 
         weeklyPieChart = binding.weeklyPieChart;
         PieDataSet piedataset2 = new PieDataSet(weeklydata1(getStartAndEndOfWeek(today).get(0),getStartAndEndOfWeek(today).get(1)),"");
-        piedataset2.setColors(ColorTemplate.PASTEL_COLORS);
+        piedataset2.setColors(getColorWithDate(getStartAndEndOfWeek(today).get(0),getStartAndEndOfWeek(today).get(1)));
         PieData pieData2 = new PieData(piedataset2);
         weeklyPieChart.setData(pieData2);
         weeklyPieChart.setCenterTextSize(25);
         weeklyPieChart.setUsePercentValues(true);
-        weeklyPieChart.setCenterText("weekly expense");
+        weeklyPieChart.setCenterText("Total: "+getTotalAmount(getStartAndEndOfWeek(today).get(0),getStartAndEndOfWeek(today).get(1))+" USD");
         weeklyPieChart.invalidate();
 
 
@@ -198,6 +209,7 @@ public class   StatisticsFragment extends Fragment {
         ArrayList<UserExpense> list2 = new ArrayList<>();
         list2 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(getStartAndEndOfWeek(today).get(0), getStartAndEndOfWeek(today).get(1));
         weeklyList = binding.listWeeklyExpense;
+        addPercent(list2,getStartAndEndOfWeek(today).get(0), getStartAndEndOfWeek(today).get(1));
         ExpensesRecycleViewAdapter adapter2 = new ExpensesRecycleViewAdapter(getContext(),list2);
         weeklyList.setAdapter(adapter2);
         weeklyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -209,12 +221,12 @@ public class   StatisticsFragment extends Fragment {
 
         monthlyPiechart = binding.monthlyPieChart;
         PieDataSet piedataset3 = new PieDataSet(monthlydata1(getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1)),"");
-        piedataset3.setColors(colorClassArray);
+        piedataset3.setColors(getColorWithDate(getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1)));
         PieData pieData3 = new PieData(piedataset3);
         monthlyPiechart.setData(pieData3);
         monthlyPiechart.setCenterTextSize(25);
         monthlyPiechart.setUsePercentValues(true);
-        monthlyPiechart.setCenterText("monthly expense");
+        monthlyPiechart.setCenterText("Total: "+getTotalAmount(getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1))+" USD");
         monthlyPiechart.invalidate();
 
 
@@ -251,8 +263,9 @@ public class   StatisticsFragment extends Fragment {
         monthlyLineChart.invalidate();
 
         ArrayList<UserExpense> list3 = new ArrayList<>();
-        list3 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(getStartAndEndOfMonth(today).get(0),getStartAndEndOfMonth(today).get(1));
+        list3 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1));
         monthlyList = binding.listMonthlyExpense;
+        addPercent(list3,getStartAndEndOfMonth(currentMonth).get(0),getStartAndEndOfMonth(currentMonth).get(1));
         ExpensesRecycleViewAdapter adapter3 = new ExpensesRecycleViewAdapter(getContext(),list3);
         monthlyList.setAdapter(adapter3);
         monthlyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -266,12 +279,12 @@ public class   StatisticsFragment extends Fragment {
         //Nhập dữ liệu cho biểu đồ thống kê năm //
         yearlyPiechart = binding.yearlyPieChart;
         PieDataSet piedataset4 = new PieDataSet(yearlydata1("1-1-"+year,"31-12-"+year),"");
-        piedataset4.setColors(ColorTemplate.COLORFUL_COLORS);
+        piedataset4.setColors(getColorWithDate("1-1-"+year,"31-12-"+year));
         PieData pieData4 = new PieData(piedataset4);
         yearlyPiechart.setData(pieData4);
         yearlyPiechart.setCenterTextSize(25);
         yearlyPiechart.setUsePercentValues(true);
-        yearlyPiechart.setCenterText("yearly expense");
+        yearlyPiechart.setCenterText("Total: "+getTotalAmount("1-1-"+year,"31-12-"+year)+" USD");
         yearlyPiechart.invalidate();
 
 
@@ -320,6 +333,7 @@ public class   StatisticsFragment extends Fragment {
         ArrayList<UserExpense> list4 = new ArrayList<>();
         list4 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates("1-1-"+year,"31-12-"+year);
         yearlyList = binding.listYearlyExpense;
+        addPercent(list4,"1-1-"+year,"31-12-"+year);
         ExpensesRecycleViewAdapter adapter4 = new ExpensesRecycleViewAdapter(getContext(),list4);
         yearlyList.setAdapter(adapter4);
         yearlyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -331,21 +345,23 @@ public class   StatisticsFragment extends Fragment {
         return root;
     }
 
+
     private void dailyStatistic(String day){
         dailyPieChart = binding.dailyPieChart;
 
         PieDataSet piedataset = new PieDataSet(dailydata1(day),"");
-        piedataset.setColors(ColorTemplate.MATERIAL_COLORS);
+        piedataset.setColors(getColorWithDate(day,day));
         PieData pieData = new PieData(piedataset);
         dailyPieChart.setData(pieData);
         dailyPieChart.setCenterTextSize(25);
         dailyPieChart.setUsePercentValues(true);
-        dailyPieChart.setCenterText("daily expense");
+        dailyPieChart.setCenterText("Total: "+getTotalAmount(day,day)+" USD");
         dailyPieChart.invalidate();
 
         ArrayList<UserExpense> list1 = new ArrayList<>();
         list1 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(day,day);
         dailyList = binding.listDailyExpense;
+        addPercent(list1,day,day);
         ExpensesRecycleViewAdapter adapter1 = new ExpensesRecycleViewAdapter(getContext(),list1);
         dailyList.setAdapter(adapter1);
         dailyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -353,18 +369,19 @@ public class   StatisticsFragment extends Fragment {
     private void weeklyStatistic(String startDay, String endDay){
         weeklyPieChart = binding.weeklyPieChart;
         PieDataSet piedataset2 = new PieDataSet(weeklydata1(startDay,endDay),"");
-        piedataset2.setColors(ColorTemplate.PASTEL_COLORS);
+        piedataset2.setColors(getColorWithDate(startDay,endDay));
         PieData pieData2 = new PieData(piedataset2);
         weeklyPieChart.setData(pieData2);
         weeklyPieChart.setCenterTextSize(25);
         weeklyPieChart.setUsePercentValues(true);
-        weeklyPieChart.setCenterText("weekly expense");
+        weeklyPieChart.setCenterText("Total: "+getTotalAmount(startDay,endDay)+" USD");
         weeklyPieChart.invalidate();
 
 
         ArrayList<UserExpense> list2 = new ArrayList<>();
         list2 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
         weeklyList = binding.listWeeklyExpense;
+        addPercent(list2,startDay,endDay);
         ExpensesRecycleViewAdapter adapter2 = new ExpensesRecycleViewAdapter(getContext(),list2);
         weeklyList.setAdapter(adapter2);
         weeklyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -374,12 +391,12 @@ public class   StatisticsFragment extends Fragment {
         ArrayList<PieEntry> a = new ArrayList<>();
         a= monthlydata1(startDay,endDay);
         PieDataSet piedataset3 = new PieDataSet(a,"");
-        piedataset3.setColors(colorClassArray);
+        piedataset3.setColors(getColorWithDate(startDay,endDay));
         PieData pieData3 = new PieData(piedataset3);
         monthlyPiechart.setData(pieData3);
         monthlyPiechart.setCenterTextSize(25);
         monthlyPiechart.setUsePercentValues(true);
-        monthlyPiechart.setCenterText("monthly expense");
+        monthlyPiechart.setCenterText("Total: "+getTotalAmount(startDay,endDay)+" USD");
         monthlyPiechart.invalidate();
 
 
@@ -420,6 +437,7 @@ public class   StatisticsFragment extends Fragment {
         ArrayList<UserExpense> list3 = new ArrayList<>();
         list3 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay,endDay);
         monthlyList = binding.listMonthlyExpense;
+        addPercent(list3,startDay,endDay);
         ExpensesRecycleViewAdapter adapter3 = new ExpensesRecycleViewAdapter(getContext(),list3);
         monthlyList.setAdapter(adapter3);
         monthlyList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -427,12 +445,12 @@ public class   StatisticsFragment extends Fragment {
     private void yearlyStatistic(String startDay, String endDay){
         yearlyPiechart = binding.yearlyPieChart;
         PieDataSet piedataset4 = new PieDataSet(yearlydata1(startDay, endDay),"");
-        piedataset4.setColors(ColorTemplate.COLORFUL_COLORS);
+        piedataset4.setColors(getColorWithDate(startDay,endDay));
         PieData pieData4 = new PieData(piedataset4);
         yearlyPiechart.setData(pieData4);
         yearlyPiechart.setCenterTextSize(25);
         yearlyPiechart.setUsePercentValues(true);
-        yearlyPiechart.setCenterText("yearly expense");
+        yearlyPiechart.setCenterText("Total: "+getTotalAmount(startDay,endDay)+" USD");
         yearlyPiechart.invalidate();
 
 
@@ -481,10 +499,28 @@ public class   StatisticsFragment extends Fragment {
         ArrayList<UserExpense> list4 = new ArrayList<>();
         list4 = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay, endDay);
         yearlyList = binding.listYearlyExpense;
+        addPercent(list4,startDay,endDay);
         ExpensesRecycleViewAdapter adapter4 = new ExpensesRecycleViewAdapter(getContext(),list4);
         yearlyList.setAdapter(adapter4);
         yearlyList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+    }
+    private int[] getColorWithDate(String startDay, String endDay){
+        ArrayList<UserExpense> list = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay,endDay);
+        int color[] = new int[list.size()];
+        for(int i = 0; i < list.size(); i++){
+            color[i] = colorIntArray[list.get(i).getType()] ;
+        }
+
+        return color;
+    }
+    private ArrayList<UserExpense> addPercent(ArrayList<UserExpense> list, String startday, String endday){
+        for(int i = 0; i < list.size();i++){
+            double pc = list.get(i).getAmount()/getTotalAmount(startday,endday)*100;
+            double percent = Math.round(pc*10);
+            list.get(i).setDescription(String.valueOf(percent/10)+" %");
+        }
+        return list;
     }
     private String category(int type){
         String category = new String();
@@ -567,6 +603,14 @@ public class   StatisticsFragment extends Fragment {
     private  double getTotalAmountOfDay(String date) {
 
         ArrayList<UserExpense> expenses = dbHandler.getInstance(getContext()).fetchExpensesByDate(date);
+        double totalAmount = 0.0;
+        for (UserExpense expense : expenses) {
+            totalAmount += expense.getAmount();
+        }
+        return totalAmount;
+    }
+    private double getTotalAmount(String startDay, String endDay){
+        ArrayList<UserExpense> expenses = dbHandler.getInstance(getContext()).fetchExpensesBetweenDates(startDay,endDay);
         double totalAmount = 0.0;
         for (UserExpense expense : expenses) {
             totalAmount += expense.getAmount();
@@ -673,7 +717,7 @@ public class   StatisticsFragment extends Fragment {
                         // Xử lý sự kiện chọn ngày tháng năm ở đây
                         TextView displayDate = binding.displayDate;
                         String selectedDate = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                        displayDate.setText(selectedDate);
+                        displayDate.setText(" Selected Date: " +selectedDate);
                         dailyStatistic(selectedDate);
                         Toast.makeText(getActivity(), "Selected Date: " + selectedDate, Toast.LENGTH_SHORT).show();
                     }
@@ -699,9 +743,9 @@ public class   StatisticsFragment extends Fragment {
 
                         String selectedDate = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
                         ArrayList<String> week = getStartAndEndOfWeek(selectedDate);
-                        displayWeek.setText(week.get(0)+ " -- "+week.get(1));
+                        displayWeek.setText(" "+week.get(0)+ " -- "+week.get(1));
                         weeklyStatistic(week.get(0),week.get(1));
-                        //Toast.makeText(getActivity(), "Selected Date: " + selectedDate, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Selected Date: " + selectedDate, Toast.LENGTH_SHORT).show();
                     }
                 },
                 currentYear,
@@ -725,7 +769,7 @@ public class   StatisticsFragment extends Fragment {
 
                         String selectedDate = (monthOfYear + 1) + "-" + year;
                         ArrayList<String> month = getStartAndEndOfMonth(selectedDate);
-                        displayMonth.setText(month.get(0)+ " -- "+month.get(1));
+                        displayMonth.setText(" "+month.get(0)+ " -- "+month.get(1));
                         monthlyStatistic(month.get(0),month.get(1));
                         Toast.makeText(getActivity(), "Selected Month: " + selectedDate, Toast.LENGTH_SHORT).show();
                     }
@@ -749,7 +793,7 @@ public class   StatisticsFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // Xử lý sự kiện chọn ngày tháng năm ở đây
                         TextView displayDate = binding.displayYear;
-                        String selectedDate = "" + year;
+                        String selectedDate = " Selected Year: " + year;
                         yearlyStatistic("1-1-"+year, "31-12-"+year);
                         displayDate.setText(selectedDate);
                         Toast.makeText(getActivity(), "Selected Year: " + selectedDate, Toast.LENGTH_SHORT).show();
