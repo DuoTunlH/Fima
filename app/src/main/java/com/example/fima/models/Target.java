@@ -1,6 +1,11 @@
 package com.example.fima.models;
 
-public class Target {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class Target implements Parcelable {
     private int id;
     private String planName;
     private double totalBudget;
@@ -16,6 +21,29 @@ public class Target {
 
     public Target() {
     }
+    protected Target(Parcel in) {
+        id = in.readInt();
+        planName = in.readString();
+        totalBudget = in.readDouble();
+        savedBudget = in.readDouble();
+        deadline = in.readString();
+        priorityLevel = in.readInt();
+        targetType = in.readString();
+        imgSrc = in.readString();
+
+    }
+
+    public static final Creator<Target> CREATOR = new Creator<Target>() {
+        @Override
+        public Target createFromParcel(Parcel in) {
+            return new Target(in);
+        }
+
+        @Override
+        public Target[] newArray(int size) {
+            return new Target[size];
+        }
+    };
 
     public static synchronized Target getInstance() {
         if (instance == null) {
@@ -97,4 +125,20 @@ public class Target {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(planName);
+        parcel.writeDouble(totalBudget);
+        parcel.writeDouble(savedBudget);
+        parcel.writeString(deadline);
+        parcel.writeString(targetType);
+        parcel.writeInt(priorityLevel);
+        parcel.writeString(imgSrc);
+    }
 }
