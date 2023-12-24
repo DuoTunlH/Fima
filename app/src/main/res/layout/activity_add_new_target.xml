@@ -2,18 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/add_new_target"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ui.AddNewTarget.AddNewTarget">
-    <!--Thêm mục tiêu mới -->
+    tools:context=".ui.AddNewTarget.AddNewTargetActivity">
 
     <TextView
         android:id="@+id/planname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
         android:text="Add new Target"
         android:textColor="#1B1B4E"
         android:textSize="38sp"
@@ -213,5 +211,4 @@
             android:layout_weight="1"
             android:text="Delete" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,8 @@
 package com.example.fima.ui.planning;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,13 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fima.Adapter.PriorityLevelAdapter;
 import com.example.fima.Adapter.TargetAdapter;
 import com.example.fima.Adapter.TypeTargetAdapter;
-import com.example.fima.R;
 import com.example.fima.databinding.FragmentPlanningBinding;
 import com.example.fima.models.DBHandler;
 import com.example.fima.models.ListTypeTarget;
 import com.example.fima.models.Target;
-import com.example.fima.ui.AddNewTarget.AddNewTarget;
-import com.example.fima.ui.TargetDetail.TargetDetail;
+import com.example.fima.ui.AddExpenseActivity;
+import com.example.fima.ui.AddNewTarget.AddNewTargetActivity;
+import com.example.fima.ui.TargetDetail.TargetDetailActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,11 +52,8 @@ public class PlanningFragment extends Fragment implements TargetAdapter.OnItemCl
 
         binding = FragmentPlanningBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        initRecyclerviewType();
-        initRecyclerviewTarget();
-        initRecyclerviewPriority();
-        return root;
 
+        return root;
     }
 
     @Override
@@ -63,6 +61,9 @@ public class PlanningFragment extends Fragment implements TargetAdapter.OnItemCl
         super.onViewCreated(view, savedInstanceState);
         ic_plus = binding.icPlus;
         icPlusOnclick();
+        initRecyclerviewType();
+        initRecyclerviewTarget();
+        initRecyclerviewPriority();
     }
 
     @Override
@@ -75,15 +76,8 @@ public class PlanningFragment extends Fragment implements TargetAdapter.OnItemCl
         ic_plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                xử lý sự kiện chuyển màn
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.nav_host_fragment_activity_main, AddNewTarget.newInstance(), null)
-                        .addToBackStack(null)
-                        .commit();
-
+                Intent intent = new Intent(getContext(), AddNewTargetActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -123,19 +117,14 @@ public class PlanningFragment extends Fragment implements TargetAdapter.OnItemCl
         recyclerViewType.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true));
         typeAdapter = new TypeTargetAdapter(getContext(), items, this);
         recyclerViewType.setAdapter(typeAdapter);
-
-
     }
 
 
     @Override
     public void onItemClick(Target item) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager
-                .beginTransaction()
-                .replace(R.id.nav_host_fragment_activity_main, TargetDetail.newInstance(item), null)
-                .addToBackStack(null)
-                .commit();
+        Intent intent = new Intent(getContext(), TargetDetailActivity.class);
+        intent.putExtra("Target", item);
+        startActivity(intent);
     }
 
     @Override
@@ -148,5 +137,13 @@ public class PlanningFragment extends Fragment implements TargetAdapter.OnItemCl
         items = DBHandler.getInstance(getContext()).fetchTargetByType(type);
         listTargetAdapter.setTypeTarget(items);
         priorityLevelAdapter.saveChangedTarget(items);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initRecyclerviewType();
+        initRecyclerviewTarget();
+        initRecyclerviewPriority();
     }
 }

@@ -1,5 +1,10 @@
 package com.example.fima.ui.UpdateTarget;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,13 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import com.example.fima.R;
-import com.example.fima.databinding.FragmentUpdateTargetBinding;
 import com.example.fima.models.DBHandler;
 import com.example.fima.models.Target;
 import com.example.fima.ui.planning.PlanningFragment;
@@ -34,8 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class UpdateTarget extends Fragment {
-    private FragmentUpdateTargetBinding binding;
+public class UpdateTargetActivity extends AppCompatActivity {
     Target target;
     EditText editTextTotalBudget, editTextSavedBudget, editTextDeadline;
     TextView textViewName;
@@ -45,46 +43,31 @@ public class UpdateTarget extends Fragment {
     Button btnUpdate, btnBack;
     SeekBar seekBar;
     List<String> type = Arrays.asList("Small", "Middle", "Big", "Short-term", "Long-term");
-
-    public UpdateTarget(Target target) {
-        this.target = target;
-    }
-
-    public UpdateTarget() {
-    }
-
-    public static UpdateTarget newInstance(Target target) {
-        UpdateTarget fragment = new UpdateTarget(target);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        binding = FragmentUpdateTargetBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        setContentView(R.layout.activity_update_target);
         setWidget();
+        target = (Target) getIntent().getParcelableExtra("Target");
         setupDataForFragment();
         editTextSavedBudgetEvent();
         setupSpinner();
         editTextDeadlineEvent();
         btnUpdateEvent();
+        btnBackEvent();
         imageViewDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 pickDate();
+            }
+        });
+    }
+
+    private void btnBackEvent() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }
@@ -95,27 +78,21 @@ public class UpdateTarget extends Fragment {
             public void onClick(View view) {
                 try {
                     if (editTextTotalBudget.getText().toString().equals("")) {
-                        Toast.makeText(getContext(), "Total Budget can not empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateTargetActivity.this, "Total Budget can not empty", Toast.LENGTH_SHORT).show();
                     } else if (editTextSavedBudget.getText().toString().equals("")) {
-                        Toast.makeText(getContext(), "Saved Budget can not empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateTargetActivity.this, "Saved Budget can not empty", Toast.LENGTH_SHORT).show();
                     } else if (editTextDeadline.getText().toString().equals("")) {
-                        Toast.makeText(getContext(), "Deadline can not empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UpdateTargetActivity.this, "Deadline can not empty", Toast.LENGTH_SHORT).show();
                     }
 
                     Target newtarget = new Target(target.getID(), textViewName.getText().toString(), Double.parseDouble(editTextTotalBudget.getText().toString()), Double.parseDouble(editTextSavedBudget.getText().toString()), editTextDeadline.getText().toString(), spinner.getSelectedItem().toString(), seekBar.getProgress(), "link_img");
-                    DBHandler.getInstance(getContext()).updateTarget(newtarget);
-                    Toast.makeText(getContext(), "New Target added successfully", Toast.LENGTH_SHORT).show();
+                    DBHandler.getInstance(UpdateTargetActivity.this).updateTarget(newtarget);
+                    Toast.makeText(UpdateTargetActivity.this, "updated Target successfully", Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "Add target Error" + e.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UpdateTargetActivity.this, "update target Error" , Toast.LENGTH_SHORT).show();
                 }
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-                fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.nav_host_fragment_activity_main, PlanningFragment.class, null)
-                        .addToBackStack(null)
-                        .commit();
+                finish();
 
             }
         });
@@ -134,7 +111,7 @@ public class UpdateTarget extends Fragment {
     }
 
     private void setupSpinner() {
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, type);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(UpdateTargetActivity.this, android.R.layout.simple_spinner_item, type);
         spinner.setAdapter(spinnerAdapter);
     }
 
@@ -161,16 +138,16 @@ public class UpdateTarget extends Fragment {
     }
 
     private void setWidget() {
-        textViewName = binding.planname;
-        editTextTotalBudget = binding.editTextTotalBudget;
-        editTextSavedBudget = binding.editTextSavedBudget;
-        editTextDeadline = binding.editTextTextDeadline;
-        imageViewDatePicker = binding.imageView;
-        spinner = binding.spinner;
-        progressBar = binding.progressBar;
-        btnBack = binding.btnBack;
-        btnUpdate = binding.btnUpdate;
-        seekBar = binding.seekBar;
+        textViewName =findViewById(R.id.planname);
+        editTextTotalBudget = findViewById(R.id.editTextTotalBudget);
+        editTextSavedBudget = findViewById(R.id.editTextSavedBudget);
+        editTextDeadline = findViewById(R.id.editTextDeadline);
+        imageViewDatePicker = findViewById(R.id.imageView);
+        spinner = findViewById(R.id.spinner);
+        progressBar = findViewById(R.id.progressBar);
+        btnBack = findViewById(R.id.btnBack);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        seekBar = findViewById(R.id.seekBar);
     }
 
     public void pickDate() {
@@ -188,7 +165,7 @@ public class UpdateTarget extends Fragment {
         day = calendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                getContext(),
+                UpdateTargetActivity.this,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year,
@@ -200,5 +177,6 @@ public class UpdateTarget extends Fragment {
                 year, month, day);
         datePickerDialog.show();
     }
+
 
 }

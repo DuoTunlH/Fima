@@ -13,6 +13,15 @@
         android:theme="@style/Theme.Fima"
         tools:targetApi="31">
         <activity
+            android:name=".ui.UpdateTarget.UpdateTargetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.TargetDetail.TargetDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AddNewTarget.AddNewTargetActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.settings.FogetPassActivity"
             android:exported="false" />
         <activity
