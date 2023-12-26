@@ -310,6 +310,7 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(TITLE, target.getPlanName());
+        cv.put(USER_ID, User.getInstance().getId());
         cv.put(TOTAL_BUDGET, target.getTotalBudget());
         cv.put(SAVED_BUDGET, target.getSavedBudget());
         cv.put(DATE, target.getDeadline());
@@ -346,7 +347,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<Target> fetchTargetByType(String type) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor
-                = db.rawQuery("SELECT * FROM " + TARGET + " WHERE " + TARGET_TYPE + " = " + "'" + type + "'", null);
+                = db.rawQuery("SELECT * FROM " + TARGET + " WHERE " + USER_ID + " = " + "'" + User.getInstance().getId()+"'" + " AND " + TARGET_TYPE + " = " + "'" + type + "'", null);
 
         ArrayList<Target> targets
                 = new ArrayList<>();
@@ -374,7 +375,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<Target> fetchAllTarget() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor
-                = db.rawQuery("SELECT * FROM " + TARGET, null);
+                = db.rawQuery("SELECT * FROM " + TARGET + " WHERE " + USER_ID + " = " + "'" + User.getInstance().getId()+"'", null);
 
         ArrayList<Target> targets
                 = new ArrayList<>();
